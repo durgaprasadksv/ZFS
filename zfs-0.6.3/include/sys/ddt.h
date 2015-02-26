@@ -121,6 +121,8 @@ struct ddt_entry {
 typedef struct ddt_bloom {
         uint64_t        size;
         uint64_t        *bf;
+        uint64_t        hits;
+        uint64_t        misses;
 } ddt_bloom_t;
 
 /*

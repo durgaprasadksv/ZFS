@@ -407,19 +407,19 @@ configure:20679: result: 0.6.3-1
 configure:20690: checking spl file name for module symbols
 configure:20731: result: Module.symvers
 configure:20735: checking whether modules can be built
-configure:20758: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:20758: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:20761: $? = 0
 configure:20763: test -s build/conftest.o
 configure:20766: $? = 0
 configure:20769: result: yes
 configure:20805: checking whether Linux was built with CONFIG_DEBUG_LOCK_ALLOC
-configure:20834: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:37:4: error: #error CONFIG_DEBUG_LOCK_ALLOC not #defined
+configure:20834: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:37:4: error: #error CONFIG_DEBUG_LOCK_ALLOC not #defined
    #error CONFIG_DEBUG_LOCK_ALLOC not #defined
     ^
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:20837: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -467,32 +467,32 @@ configure: failed program was:
 | 
 configure:20922: result: no
 configure:20936: checking block device operation prototypes
-configure:20979: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:20979: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:20982: $? = 0
 configure:20984: test -s build/conftest.o
 configure:20987: $? = 0
 configure:20990: result: struct block_device
 configure:21012: checking whether block_device_operations.release is void
-configure:21050: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21050: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21053: $? = 0
 configure:21055: test -s build/conftest.o
 configure:21058: $? = 0
 configure:21061: result: void
 configure:21082: checking whether kernel defines fmode_t
-configure:21109: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21109: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21112: $? = 0
 configure:21114: test -s build/conftest.o
 configure:21117: $? = 0
 configure:21120: result: yes
 configure:21141: checking whether kernel defines KOBJ_NAME_LEN
-configure:21169: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:40:9: error: ‘KOBJ_NAME_LEN’ undeclared (first use in this function)
+configure:21169: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:40:9: error: ‘KOBJ_NAME_LEN’ undeclared (first use in this function)
    val = KOBJ_NAME_LEN;
          ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:40:9: note: each undeclared identifier is reported only once for each function it appears in
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:40:9: note: each undeclared identifier is reported only once for each function it appears in
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:21172: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -542,26 +542,26 @@ configure: failed program was:
 | 
 configure:21190: result: no
 configure:21201: checking whether blkdev_get() wants 3 args
-configure:21229: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21229: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21232: $? = 0
 configure:21234: test -s build/conftest.o
 configure:21237: $? = 0
 configure:21240: result: yes
 configure:21260: checking whether blkdev_get_by_path() is available
-configure:21288: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21288: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21291: $? = 0
 configure:21293: test -s build/conftest.o
 configure:21296: $? = 0
 configure:21348: result: yes
 configure:21358: checking whether open_bdev_exclusive() is available
-configure:21386: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:41:3: error: implicit declaration of function ‘open_bdev_exclusive’ [-Werror=implicit-function-declaration]
+configure:21386: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:41:3: error: implicit declaration of function ‘open_bdev_exclusive’ [-Werror=implicit-function-declaration]
    open_bdev_exclusive(NULL, 0, NULL);
    ^
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:21389: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -612,37 +612,37 @@ configure: failed program was:
 | 
 configure:21409: result: no
 configure:21456: checking whether lookup_bdev() is available
-configure:21484: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21484: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21487: $? = 0
 configure:21489: test -s build/conftest.o
 configure:21492: $? = 0
 configure:21544: result: yes
 configure:21555: checking whether invalidate_bdev() wants 1 arg
-configure:21583: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21583: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21586: $? = 0
 configure:21588: test -s build/conftest.o
 configure:21591: $? = 0
 configure:21594: result: yes
 configure:21615: checking whether bdev_logical_block_size() is available
-configure:21645: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21645: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21648: $? = 0
 configure:21650: test -s build/conftest.o
 configure:21653: $? = 0
 configure:21656: result: yes
 configure:21678: checking whether bdev_physical_block_size() is available
-configure:21708: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21708: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21711: $? = 0
 configure:21713: test -s build/conftest.o
 configure:21716: $? = 0
 configure:21719: result: yes
 configure:21741: checking whether bio has bi_iter
-configure:21769: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:46:6: error: ‘struct bio’ has no member named ‘bi_iter’
+configure:21769: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:46:6: error: ‘struct bio’ has no member named ‘bi_iter’
    bio.bi_iter.bi_sector = 0;
       ^
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:21772: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -698,14 +698,14 @@ configure: failed program was:
 | 
 configure:21790: result: no
 configure:21801: checking whether BIO_RW_FAILFAST is defined
-configure:21829: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:46:17: error: ‘BIO_RW_FAILFAST’ undeclared (first use in this function)
+configure:21829: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:46:17: error: ‘BIO_RW_FAILFAST’ undeclared (first use in this function)
    flags = (1 << BIO_RW_FAILFAST);
                  ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:46:17: note: each undeclared identifier is reported only once for each function it appears in
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:46:17: note: each undeclared identifier is reported only once for each function it appears in
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:21832: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -761,20 +761,20 @@ configure: failed program was:
 | 
 configure:21850: result: no
 configure:21861: checking whether BIO_RW_FAILFAST_* are defined
-configure:21891: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:46:18: error: ‘BIO_RW_FAILFAST_DEV’ undeclared (first use in this function)
+configure:21891: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:46:18: error: ‘BIO_RW_FAILFAST_DEV’ undeclared (first use in this function)
    flags = ((1 << BIO_RW_FAILFAST_DEV) |
                   ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:46:18: note: each undeclared identifier is reported only once for each function it appears in
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:47:11: error: ‘BIO_RW_FAILFAST_TRANSPORT’ undeclared (first use in this function)
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:46:18: note: each undeclared identifier is reported only once for each function it appears in
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:47:11: error: ‘BIO_RW_FAILFAST_TRANSPORT’ undeclared (first use in this function)
      (1 << BIO_RW_FAILFAST_TRANSPORT) |
            ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:48:11: error: ‘BIO_RW_FAILFAST_DRIVER’ undeclared (first use in this function)
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:48:11: error: ‘BIO_RW_FAILFAST_DRIVER’ undeclared (first use in this function)
      (1 << BIO_RW_FAILFAST_DRIVER));
            ^
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:21894: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -832,26 +832,26 @@ configure: failed program was:
 | 
 configure:21912: result: no
 configure:21923: checking whether REQ_FAILFAST_MASK is defined
-configure:21951: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:21951: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:21954: $? = 0
 configure:21956: test -s build/conftest.o
 configure:21959: $? = 0
 configure:21962: result: yes
 configure:21983: checking whether bio_end_io_t wants 2 args
-configure:22013: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22013: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22016: $? = 0
 configure:22018: test -s build/conftest.o
 configure:22021: $? = 0
 configure:22024: result: yes
 configure:22045: checking whether BIO_RW_SYNC is defined
-configure:22073: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:48:11: error: ‘BIO_RW_SYNC’ undeclared (first use in this function)
+configure:22073: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:48:11: error: ‘BIO_RW_SYNC’ undeclared (first use in this function)
    flags = BIO_RW_SYNC;
            ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:48:11: note: each undeclared identifier is reported only once for each function it appears in
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:48:11: note: each undeclared identifier is reported only once for each function it appears in
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:22076: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -909,14 +909,14 @@ configure: failed program was:
 | 
 configure:22094: result: no
 configure:22105: checking whether BIO_RW_SYNCIO is defined
-configure:22133: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:48:11: error: ‘BIO_RW_SYNCIO’ undeclared (first use in this function)
+configure:22133: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:48:11: error: ‘BIO_RW_SYNCIO’ undeclared (first use in this function)
    flags = BIO_RW_SYNCIO;
            ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:48:11: note: each undeclared identifier is reported only once for each function it appears in
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:48:11: note: each undeclared identifier is reported only once for each function it appears in
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:22136: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -974,31 +974,31 @@ configure: failed program was:
 | 
 configure:22154: result: no
 configure:22165: checking whether REQ_SYNC is defined
-configure:22193: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22193: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22196: $? = 0
 configure:22198: test -s build/conftest.o
 configure:22201: $? = 0
 configure:22204: result: yes
 configure:22225: checking whether blk_end_request() is available
-configure:22255: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22255: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22258: $? = 0
 configure:22260: test -s build/conftest.o
 configure:22263: $? = 0
 configure:22266: result: yes
 configure:22286: checking whether blk_end_request() is GPL-only
-configure:22317: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22317: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22320: $? = 0
 configure:22322: test -s build/conftest.o
 configure:22325: $? = 0
 configure:22328: result: no
 configure:22350: checking whether blk_queue_flush() is available
-configure:22380: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22380: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22383: $? = 0
 configure:22385: test -s build/conftest.o
 configure:22388: $? = 0
 configure:22391: result: yes
 configure:22411: checking whether blk_queue_flush() is GPL-only
-configure:22442: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22442: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 FATAL: modpost: GPL-incompatible module conftest.ko uses GPL-only symbol 'blk_queue_flush'
 make[1]: *** [__modpost] Error 1
 make: *** [modules] Error 2
@@ -1065,113 +1065,113 @@ configure: failed program was:
 | 
 configure:22460: result: yes
 configure:22475: checking whether blk_queue_max_hw_sectors() is available
-configure:22505: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22505: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22508: $? = 0
 configure:22510: test -s build/conftest.o
 configure:22513: $? = 0
 configure:22516: result: yes
 configure:22538: checking whether blk_queue_max_segments() is available
-configure:22568: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22568: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22571: $? = 0
 configure:22573: test -s build/conftest.o
 configure:22576: $? = 0
 configure:22579: result: yes
 configure:22601: checking whether blk_queue_physical_block_size() is available
-configure:22632: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22632: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22635: $? = 0
 configure:22637: test -s build/conftest.o
 configure:22640: $? = 0
 configure:22643: result: yes
 configure:22665: checking whether blk_queue_io_opt() is available
-configure:22696: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22696: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22699: $? = 0
 configure:22701: test -s build/conftest.o
 configure:22704: $? = 0
 configure:22707: result: yes
 configure:22729: checking whether blk_queue_nonrot() is available
-configure:22759: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22759: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22762: $? = 0
 configure:22764: test -s build/conftest.o
 configure:22767: $? = 0
 configure:22770: result: yes
 configure:22792: checking whether blk_queue_discard() is available
-configure:22822: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22822: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22825: $? = 0
 configure:22827: test -s build/conftest.o
 configure:22830: $? = 0
 configure:22833: result: yes
 configure:22855: checking whether blk_fetch_request() is available
-configure:22885: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22885: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22888: $? = 0
 configure:22890: test -s build/conftest.o
 configure:22893: $? = 0
 configure:22896: result: yes
 configure:22918: checking whether blk_requeue_request() is available
-configure:22949: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:22949: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:22952: $? = 0
 configure:22954: test -s build/conftest.o
 configure:22957: $? = 0
 configure:22960: result: yes
 configure:22982: checking whether blk_rq_bytes() is available
-configure:23012: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23012: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23015: $? = 0
 configure:23017: test -s build/conftest.o
 configure:23020: $? = 0
 configure:23023: result: yes
 configure:23043: checking whether blk_rq_bytes() is GPL-only
-configure:23074: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23074: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23077: $? = 0
 configure:23079: test -s build/conftest.o
 configure:23082: $? = 0
 configure:23085: result: no
 configure:23107: checking whether blk_rq_pos() is available
-configure:23137: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23137: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23140: $? = 0
 configure:23142: test -s build/conftest.o
 configure:23145: $? = 0
 configure:23148: result: yes
 configure:23170: checking whether blk_rq_sectors() is available
-configure:23200: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23200: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23203: $? = 0
 configure:23205: test -s build/conftest.o
 configure:23208: $? = 0
 configure:23211: result: yes
 configure:23233: checking whether get_disk_ro() is available
-configure:23263: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23263: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23266: $? = 0
 configure:23268: test -s build/conftest.o
 configure:23271: $? = 0
 configure:23274: result: yes
 configure:23295: checking whether get_gendisk() is available
-configure:23323: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23323: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23326: $? = 0
 configure:23328: test -s build/conftest.o
 configure:23331: $? = 0
 configure:23383: result: yes
 configure:23394: checking whether rq_is_sync() is available
-configure:23424: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23424: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23427: $? = 0
 configure:23429: test -s build/conftest.o
 configure:23432: $? = 0
 configure:23435: result: yes
 configure:23460: checking whether rq_for_each_segment() wants bio_vec *
-configure:23490: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23490: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23493: $? = 0
 configure:23495: test -s build/conftest.o
 configure:23498: $? = 0
 configure:23501: result: yes
 configure:23524: checking whether rq_for_each_segment() wants bio_vec
-configure:23554: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23554: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 In file included from include/linux/blkdev.h:18:0,
-                 from /home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:61:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
+                 from /home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:61:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
 include/linux/bio.h:154:11: error: incompatible types when assigning to type ‘struct bio_vec’ from type ‘struct bio_vec *’
        bvl = bio_iovec_idx((bio), (i)), i < (bio)->bi_vcnt; \
            ^
 include/linux/blkdev.h:751:3: note: in expansion of macro ‘bio_for_each_segment’
    bio_for_each_segment(bvl, _iter.bio, _iter.i)
    ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:70:3: note: in expansion of macro ‘rq_for_each_segment’
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:70:3: note: in expansion of macro ‘rq_for_each_segment’
    rq_for_each_segment(bv, req, iter) { }
    ^
 include/linux/bio.h:154:38: error: left-hand operand of comma expression has no effect [-Werror=unused-value]
@@ -1180,12 +1180,12 @@ include/linux/bio.h:154:38: error: left-hand operand of comma expression has no 
 include/linux/blkdev.h:751:3: note: in expansion of macro ‘bio_for_each_segment’
    bio_for_each_segment(bvl, _iter.bio, _iter.i)
    ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:70:3: note: in expansion of macro ‘rq_for_each_segment’
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:70:3: note: in expansion of macro ‘rq_for_each_segment’
    rq_for_each_segment(bv, req, iter) { }
    ^
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:23557: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1265,60 +1265,60 @@ configure: failed program was:
 | 
 configure:23578: result: no
 configure:23591: checking whether ql->discard_granularity is available
-configure:23620: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23620: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23623: $? = 0
 configure:23625: test -s build/conftest.o
 configure:23628: $? = 0
 configure:23631: result: yes
 configure:23651: checking whether super_block uses const struct xattr_hander
-configure:23692: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23692: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23695: $? = 0
 configure:23697: test -s build/conftest.o
 configure:23700: $? = 0
 configure:23703: result: yes
 configure:23724: checking whether xattr_handler->get() wants dentry
-configure:23757: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23757: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23760: $? = 0
 configure:23762: test -s build/conftest.o
 configure:23765: $? = 0
 configure:23768: result: yes
 configure:23789: checking whether xattr_handler->set() wants dentry
-configure:23823: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23823: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23826: $? = 0
 configure:23828: test -s build/conftest.o
 configure:23831: $? = 0
 configure:23834: result: yes
 configure:23855: checking whether xattr_handler->list() wants dentry
-configure:23889: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23889: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23892: $? = 0
 configure:23894: test -s build/conftest.o
 configure:23897: $? = 0
 configure:23900: result: yes
 configure:23921: checking whether inode_owner_or_capable() exists
-configure:23949: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:23949: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:23952: $? = 0
 configure:23954: test -s build/conftest.o
 configure:23957: $? = 0
 configure:23960: result: yes
 configure:24040: checking whether posix_acl_from_xattr() needs user_ns
-configure:24069: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24069: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24072: $? = 0
 configure:24074: test -s build/conftest.o
 configure:24077: $? = 0
 configure:24080: result: yes
 configure:24101: checking whether posix_acl_release() is available
-configure:24131: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24131: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24134: $? = 0
 configure:24136: test -s build/conftest.o
 configure:24139: $? = 0
 configure:24142: result: yes
 configure:24162: checking whether posix_acl_release() is GPL-only
-configure:24194: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:73:18: error: expected declaration specifiers or ‘...’ before string constant
+configure:24194: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:73:18: error: expected declaration specifiers or ‘...’ before string constant
    MODULE_LICENSE("CDDL");
                   ^
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:24197: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1408,20 +1408,20 @@ configure: failed program was:
 | 
 configure:24212: result: yes
 configure:24226: checking whether posix_acl_chmod exists
-configure:24254: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24254: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24257: $? = 0
 configure:24259: test -s build/conftest.o
 configure:24262: $? = 0
 configure:24265: result: yes
 configure:24285: checking whether __posix_acl_chmod exists
-configure:24313: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:78:3: error: implicit declaration of function ‘__posix_acl_chmod’ [-Werror=implicit-function-declaration]
+configure:24313: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:78:3: error: implicit declaration of function ‘__posix_acl_chmod’ [-Werror=implicit-function-declaration]
    __posix_acl_chmod(NULL, 0, 0)
    ^
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:24316: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1509,32 +1509,32 @@ configure: failed program was:
 | 
 configure:24334: result: no
 configure:24345: checking whether inode has i_acl and i_default_acl
-configure:24374: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24374: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24377: $? = 0
 configure:24379: test -s build/conftest.o
 configure:24382: $? = 0
 configure:24385: result: yes
 configure:24406: checking whether posix_acl_equiv_mode() wants umode_t
-configure:24435: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24435: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24438: $? = 0
 configure:24440: test -s build/conftest.o
 configure:24443: $? = 0
 configure:24446: result: yes
 configure:24467: checking whether iops->permission() exists
-configure:24500: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24500: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24503: $? = 0
 configure:24505: test -s build/conftest.o
 configure:24508: $? = 0
 configure:24511: result: yes
 configure:24532: checking whether iops->permission() wants nameidata
-configure:24566: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:81:4: error: initialization from incompatible pointer type [-Werror]
+configure:24566: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:81:4: error: initialization from incompatible pointer type [-Werror]
     .permission = permission_fn,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:81:4: error: (near initialization for ‘iops.permission’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:81:4: error: (near initialization for ‘iops.permission’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:24569: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1631,15 +1631,15 @@ configure: failed program was:
 | 
 configure:24590: result: no
 configure:24601: checking whether iops->check_acl() exists
-configure:24634: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:80:4: error: unknown field ‘check_acl’ specified in initializer
+configure:24634: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:80:4: error: unknown field ‘check_acl’ specified in initializer
     .check_acl = check_acl_fn,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:80:4: error: initialization from incompatible pointer type [-Werror]
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:80:4: error: (near initialization for ‘iops.lookup’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:80:4: error: initialization from incompatible pointer type [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:80:4: error: (near initialization for ‘iops.lookup’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:24637: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1735,15 +1735,15 @@ configure: failed program was:
 | 
 configure:24655: result: no
 configure:24666: checking whether iops->check_acl() wants flags
-configure:24700: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:81:4: error: unknown field ‘check_acl’ specified in initializer
+configure:24700: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:81:4: error: unknown field ‘check_acl’ specified in initializer
     .check_acl = check_acl_fn,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:81:4: error: initialization from incompatible pointer type [-Werror]
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:81:4: error: (near initialization for ‘iops.lookup’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:81:4: error: initialization from incompatible pointer type [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:81:4: error: (near initialization for ‘iops.lookup’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:24703: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1840,32 +1840,32 @@ configure: failed program was:
 | 
 configure:24724: result: no
 configure:24735: checking whether iops->get_acl() exists
-configure:24769: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24769: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24772: $? = 0
 configure:24774: test -s build/conftest.o
 configure:24777: $? = 0
 configure:24780: result: yes
 configure:24801: checking whether current_umask exists
-configure:24828: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24828: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24831: $? = 0
 configure:24833: test -s build/conftest.o
 configure:24836: $? = 0
 configure:24839: result: yes
 configure:24860: checking whether sops->show_options() wants dentry
-configure:24892: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:24892: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:24895: $? = 0
 configure:24897: test -s build/conftest.o
 configure:24900: $? = 0
 configure:24903: result: yes
 configure:24924: checking whether fops->fsync() wants
-configure:24959: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:84:4: error: initialization from incompatible pointer type [-Werror]
+configure:24959: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:84:4: error: initialization from incompatible pointer type [-Werror]
     .fsync = test_fsync,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:84:4: error: (near initialization for ‘fops.fsync’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:84:4: error: (near initialization for ‘fops.fsync’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:24962: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -1963,14 +1963,14 @@ configure: failed program was:
 |   return 0;
 | }
 | 
-configure:25020: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:83:4: error: initialization from incompatible pointer type [-Werror]
+configure:25020: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:83:4: error: initialization from incompatible pointer type [-Werror]
     .fsync = test_fsync,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:83:4: error: (near initialization for ‘fops.fsync’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:83:4: error: (near initialization for ‘fops.fsync’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25023: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2067,32 +2067,32 @@ configure: failed program was:
 |   return 0;
 | }
 | 
-configure:25082: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25082: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25085: $? = 0
 configure:25087: test -s build/conftest.o
 configure:25090: $? = 0
 configure:25093: result: range
 configure:25113: checking whether sops->evict_inode() exists
-configure:25143: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25143: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25146: $? = 0
 configure:25148: test -s build/conftest.o
 configure:25151: $? = 0
 configure:25154: result: yes
 configure:25175: checking whether sops->dirty_inode() wants flags
-configure:25208: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25208: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25211: $? = 0
 configure:25213: test -s build/conftest.o
 configure:25216: $? = 0
 configure:25219: result: yes
 configure:25240: checking whether sops->nr_cached_objects() exists
-configure:25273: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:86:4: error: initialization from incompatible pointer type [-Werror]
+configure:25273: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:86:4: error: initialization from incompatible pointer type [-Werror]
     .nr_cached_objects = nr_cached_objects,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:86:4: error: (near initialization for ‘sops.nr_cached_objects’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:86:4: error: (near initialization for ‘sops.nr_cached_objects’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25276: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2194,14 +2194,14 @@ configure: failed program was:
 | 
 configure:25294: result: no
 configure:25305: checking whether sops->free_cached_objects() exists
-configure:25339: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:87:4: error: initialization from incompatible pointer type [-Werror]
+configure:25339: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:87:4: error: initialization from incompatible pointer type [-Werror]
     .free_cached_objects = free_cached_objects,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:87:4: error: (near initialization for ‘sops.free_cached_objects’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:87:4: error: (near initialization for ‘sops.free_cached_objects’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25342: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2304,21 +2304,21 @@ configure: failed program was:
 | 
 configure:25360: result: no
 configure:25372: checking whether fops->fallocate() exists
-configure:25406: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25406: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25409: $? = 0
 configure:25411: test -s build/conftest.o
 configure:25414: $? = 0
 configure:25417: result: yes
 configure:25438: checking whether iops->fallocate() exists
-configure:25472: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:88:4: error: unknown field ‘fallocate’ specified in initializer
+configure:25472: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:88:4: error: unknown field ‘fallocate’ specified in initializer
     .fallocate = test_fallocate,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:88:4: error: initialization from incompatible pointer type [-Werror]
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:88:4: error: (near initialization for ‘fops.lookup’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:88:4: error: initialization from incompatible pointer type [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:88:4: error: (near initialization for ‘fops.lookup’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25475: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2422,20 +2422,20 @@ configure: failed program was:
 | 
 configure:25493: result: no
 configure:25505: checking whether iops->create()/mkdir()/mknod() take umode_t
-configure:25539: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25539: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25542: $? = 0
 configure:25544: test -s build/conftest.o
 configure:25547: $? = 0
 configure:25550: result: yes
 configure:25571: checking whether iops->lookup() takes struct nameidata
-configure:25606: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:90:4: error: initialization from incompatible pointer type [-Werror]
+configure:25606: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:90:4: error: initialization from incompatible pointer type [-Werror]
     .lookup = inode_lookup,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:90:4: error: (near initialization for ‘iops.lookup’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:90:4: error: (near initialization for ‘iops.lookup’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25609: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2541,14 +2541,14 @@ configure: failed program was:
 | 
 configure:25627: result: no
 configure:25638: checking whether iops->create() takes struct nameidata
-configure:25677: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:94:4: error: initialization from incompatible pointer type [-Werror]
+configure:25677: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:94:4: error: initialization from incompatible pointer type [-Werror]
     .create  = inode_create,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:94:4: error: (near initialization for ‘iops.create’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:94:4: error: (near initialization for ‘iops.create’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25680: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2658,15 +2658,15 @@ configure: failed program was:
 | 
 configure:25698: result: no
 configure:25709: checking whether iops->truncate_range() exists
-configure:25740: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:86:4: error: unknown field ‘truncate_range’ specified in initializer
+configure:25740: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:86:4: error: unknown field ‘truncate_range’ specified in initializer
     .truncate_range = truncate_range,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:86:4: error: initialization from incompatible pointer type [-Werror]
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:86:4: error: (near initialization for ‘iops.lookup’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:86:4: error: initialization from incompatible pointer type [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:86:4: error: (near initialization for ‘iops.lookup’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:25743: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2768,62 +2768,62 @@ configure: failed program was:
 | 
 configure:25761: result: no
 configure:25772: checking whether dops->d_automount() exists
-configure:25802: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25802: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25805: $? = 0
 configure:25807: test -s build/conftest.o
 configure:25810: $? = 0
 configure:25813: result: yes
 configure:25834: checking whether eops->encode_fh() wants inode
-configure:25865: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25865: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25868: $? = 0
 configure:25870: test -s build/conftest.o
 configure:25873: $? = 0
 configure:25876: result: yes
 configure:25897: checking whether eops->commit_metadata() exists
-configure:25927: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25927: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25930: $? = 0
 configure:25932: test -s build/conftest.o
 configure:25935: $? = 0
 configure:25938: result: yes
 configure:25958: checking whether clear_inode() is available
-configure:25986: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:25986: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:25989: $? = 0
 configure:25991: test -s build/conftest.o
 configure:25994: $? = 0
 configure:26046: result: yes
 configure:26056: checking whether insert_inode_locked() is available
-configure:26084: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26084: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26087: $? = 0
 configure:26089: test -s build/conftest.o
 configure:26092: $? = 0
 configure:26144: result: yes
 configure:26154: checking whether d_make_root() is available
-configure:26182: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26182: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26185: $? = 0
 configure:26187: test -s build/conftest.o
 configure:26190: $? = 0
 configure:26242: result: yes
 configure:26252: checking whether d_obtain_alias() is available
-configure:26280: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26280: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26283: $? = 0
 configure:26285: test -s build/conftest.o
 configure:26288: $? = 0
 configure:26340: result: yes
 configure:26350: checking whether d_set_d_op() is available
-configure:26378: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26378: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26381: $? = 0
 configure:26383: test -s build/conftest.o
 configure:26386: $? = 0
 configure:26438: result: yes
 configure:26449: checking whether dops->d_revalidate() takes struct nameidata
-configure:26483: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:97:4: error: initialization from incompatible pointer type [-Werror]
+configure:26483: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:97:4: error: initialization from incompatible pointer type [-Werror]
     .d_revalidate = revalidate,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:97:4: error: (near initialization for ‘dops.d_revalidate’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:97:4: error: (near initialization for ‘dops.d_revalidate’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:26486: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -2936,43 +2936,43 @@ configure: failed program was:
 | 
 configure:26504: result: no
 configure:26515: checking whether dentry uses const struct dentry_operations
-configure:26548: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26548: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26551: $? = 0
 configure:26553: test -s build/conftest.o
 configure:26556: $? = 0
 configure:26559: result: yes
 configure:26579: checking whether check_disk_size_change() is available
-configure:26607: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26607: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26610: $? = 0
 configure:26612: test -s build/conftest.o
 configure:26615: $? = 0
 configure:26667: result: yes
 configure:26677: checking whether truncate_setsize() is available
-configure:26705: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26705: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26708: $? = 0
 configure:26710: test -s build/conftest.o
 configure:26713: $? = 0
 configure:26765: result: yes
 configure:26776: checking whether security_inode_init_security wants 6 args
-configure:26810: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:106:3: error: passing argument 4 of ‘security_inode_init_security’ from incompatible pointer type [-Werror]
+configure:26810: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:106:3: error: passing argument 4 of ‘security_inode_init_security’ from incompatible pointer type [-Werror]
    security_inode_init_security(ip, dip, str, &name, &value, &len);
    ^
-In file included from /home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:93:0:
+In file included from /home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:93:0:
 include/linux/security.h:1779:5: note: expected ‘initxattrs’ but argument is of type ‘char **’
  int security_inode_init_security(struct inode *inode, struct inode *dir,
      ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:106:3: error: too many arguments to function ‘security_inode_init_security’
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:106:3: error: too many arguments to function ‘security_inode_init_security’
    security_inode_init_security(ip, dip, str, &name, &value, &len);
    ^
-In file included from /home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:93:0:
+In file included from /home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:93:0:
 include/linux/security.h:1779:5: note: declared here
  int security_inode_init_security(struct inode *inode, struct inode *dir,
      ^
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:26813: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -3088,27 +3088,27 @@ configure: failed program was:
 | 
 configure:26831: result: no
 configure:26842: checking whether security_inode_init_security wants callback
-configure:26874: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26874: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26877: $? = 0
 configure:26879: test -s build/conftest.o
 configure:26882: $? = 0
 configure:26885: result: yes
 configure:26905: checking whether mount_nodev() is available
-configure:26933: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:26933: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:26936: $? = 0
 configure:26938: test -s build/conftest.o
 configure:26941: $? = 0
 configure:26993: result: yes
 configure:27004: checking whether super_block has s_shrink
-configure:27040: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:102:4: error: unknown field ‘shrink’ specified in initializer
+configure:27040: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:102:4: error: unknown field ‘shrink’ specified in initializer
     .s_shrink.shrink = shrink,
     ^
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:102:4: error: initialization from incompatible pointer type [-Werror]
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:102:4: error: (near initialization for ‘sb.s_shrink.count_objects’) [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:102:4: error: initialization from incompatible pointer type [-Werror]
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:102:4: error: (near initialization for ‘sb.s_shrink.count_objects’) [-Werror]
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:27043: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -3228,20 +3228,20 @@ configure: failed program was:
 | 
 configure:27062: result: no
 configure:27073: checking whether super_block has s_instances list_head
-configure:27102: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:103:3: error: passing argument 1 of ‘INIT_LIST_HEAD’ from incompatible pointer type [-Werror]
+configure:27102: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:103:3: error: passing argument 1 of ‘INIT_LIST_HEAD’ from incompatible pointer type [-Werror]
    INIT_LIST_HEAD(&sb.s_instances);
    ^
 In file included from include/linux/wait.h:6:0,
                  from include/linux/fs.h:6,
-                 from /home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:95:
+                 from /home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:95:
 include/linux/list.h:24:20: note: expected ‘struct list_head *’ but argument is of type ‘struct hlist_node *’
  static inline void INIT_LIST_HEAD(struct list_head *list)
                     ^
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:27105: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -3354,50 +3354,50 @@ configure: failed program was:
 | 
 configure:27123: result: no
 configure:27133: checking whether super_block has s_d_op
-configure:27161: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27161: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27164: $? = 0
 configure:27166: test -s build/conftest.o
 configure:27169: $? = 0
 configure:27172: result: yes
 configure:27193: checking whether super_block has s_bdi
-configure:27224: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27224: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27227: $? = 0
 configure:27229: test -s build/conftest.o
 configure:27232: $? = 0
 configure:27235: result: yes
 configure:27255: checking whether bdi_setup_and_register() is available
-configure:27284: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27284: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27287: $? = 0
 configure:27289: test -s build/conftest.o
 configure:27292: $? = 0
 configure:27344: result: yes
 configure:27355: checking whether set_nlink() is available
-configure:27384: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27384: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27387: $? = 0
 configure:27389: test -s build/conftest.o
 configure:27392: $? = 0
 configure:27395: result: yes
 configure:27416: checking whether elevator_change() is available
-configure:27449: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27449: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror -Wno-unused-but-set-variable  M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27452: $? = 0
 configure:27454: test -s build/conftest.o
 configure:27457: $? = 0
 configure:27460: result: yes
 configure:27481: checking whether sget() wants 5 args
-configure:27513: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27513: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27516: $? = 0
 configure:27518: test -s build/conftest.o
 configure:27521: $? = 0
 configure:27524: result: yes
 configure:27544: checking whether lseek_execute() is available
-configure:27577: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c: In function ‘main’:
-/home/ubuntu/zfs/zfs-0.6.3/build/conftest.c:112:3: error: implicit declaration of function ‘lseek_execute’ [-Werror=implicit-function-declaration]
+configure:27577: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c: In function ‘main’:
+/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.c:112:3: error: implicit declaration of function ‘lseek_execute’ [-Werror=implicit-function-declaration]
    lseek_execute(fp, ip, offset, maxsize);
    ^
 cc1: all warnings being treated as errors
-make[1]: *** [/home/ubuntu/zfs/zfs-0.6.3/build/conftest.o] Error 1
-make: *** [_module_/home/ubuntu/zfs/zfs-0.6.3/build] Error 2
+make[1]: *** [/home/ubuntu/zfs/ZFS/zfs-0.6.3/build/conftest.o] Error 1
+make: *** [_module_/home/ubuntu/zfs/ZFS/zfs-0.6.3/build] Error 2
 configure:27580: $? = 2
 configure: failed program was:
 | /* confdefs.h */
@@ -3519,7 +3519,7 @@ configure: failed program was:
 | 
 configure:27600: result: no
 configure:27648: checking whether fops->iterate() is available
-configure:27681: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/zfs-0.6.3/build 
+configure:27681: cp conftest.c build && make modules -C /usr/src/linux-headers-3.13.0-45-generic EXTRA_CFLAGS=-Werror   M=/home/ubuntu/zfs/ZFS/zfs-0.6.3/build 
 configure:27684: $? = 0
 configure:27686: test -s build/conftest.o
 configure:27689: $? = 0
@@ -3799,7 +3799,7 @@ lt_cv_to_tool_file_cmd=func_convert_file_noop
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /home/ubuntu/zfs/zfs-0.6.3/config/missing --run aclocal-1.11'
+ACLOCAL='${SHELL} /home/ubuntu/zfs/ZFS/zfs-0.6.3/config/missing --run aclocal-1.11'
 ALIEN='alien'
 ALIEN_VERSION='8.90'
 AMDEPBACKSLASH='\'
@@ -3811,9 +3811,9 @@ AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
 AM_DEFAULT_VERBOSITY='0'
 AM_V='$(V)'
 AR='ar'
-AUTOCONF='${SHELL} /home/ubuntu/zfs/zfs-0.6.3/config/missing --run autoconf'
-AUTOHEADER='${SHELL} /home/ubuntu/zfs/zfs-0.6.3/config/missing --run autoheader'
-AUTOMAKE='${SHELL} /home/ubuntu/zfs/zfs-0.6.3/config/missing --run automake-1.11'
+AUTOCONF='${SHELL} /home/ubuntu/zfs/ZFS/zfs-0.6.3/config/missing --run autoconf'
+AUTOHEADER='${SHELL} /home/ubuntu/zfs/ZFS/zfs-0.6.3/config/missing --run autoheader'
+AUTOMAKE='${SHELL} /home/ubuntu/zfs/ZFS/zfs-0.6.3/config/missing --run automake-1.11'
 AWK='gawk'
 CC='gcc'
 CCAS='gcc'
@@ -3880,7 +3880,7 @@ LTLIBOBJS=''
 MAINT='#'
 MAINTAINER_MODE_FALSE=''
 MAINTAINER_MODE_TRUE='#'
-MAKEINFO='${SHELL} /home/ubuntu/zfs/zfs-0.6.3/config/missing --run makeinfo'
+MAKEINFO='${SHELL} /home/ubuntu/zfs/ZFS/zfs-0.6.3/config/missing --run makeinfo'
 MANIFEST_TOOL=':'
 MKDIR_P='/bin/mkdir -p'
 NM='/usr/bin/nm -B'
@@ -3976,7 +3976,7 @@ host_vendor='unknown'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /home/ubuntu/zfs/zfs-0.6.3/config/install-sh'
+install_sh='${SHELL} /home/ubuntu/zfs/ZFS/zfs-0.6.3/config/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'
