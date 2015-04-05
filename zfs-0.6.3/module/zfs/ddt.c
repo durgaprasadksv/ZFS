@@ -668,11 +668,6 @@ ddt_exit(ddt_t *ddt)
 void
 ddt_init(void)
 {
-        /* VINAY: Debug message */
-#if defined(_KERNEL)
-        printk("ZFS: ddt_init: Initializing ddt module\n");
-#endif
-
 	ddt_cache = kmem_cache_create("ddt_cache",
 	    sizeof (ddt_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
 	ddt_entry_cache = kmem_cache_create("ddt_entry_cache",
@@ -730,23 +725,35 @@ ddt_remove(ddt_t *ddt, ddt_entry_t *dde)
 static boolean_t 
 ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
 {
-        uint32_t index = (uint32_t) dde_search->dde_key.ddk_cksum.zc_word[3];
-        index = index & 0x3fffffff;
+        // uint32_t index = (uint32_t) dde_search->dde_key.ddk_cksum.zc_word[3];
+        uint64_t index = dde_search->dde_key.ddk_cksum.zc_word[2];
+
+        /* The last 33 bits, since 1GB = 2^33 bits */
+        index = index & 0x1ffffffff;
+
+        /* The bit-position within the bloom filter element 
+           (The element itself is considered as a uint64_t */
+        uint64_t bit_pos = 1 << (index % 64);
+
+        /* Every 64th bit increments the index, since our bloomfilter
+           is an array of uint64_t's */
         index = (index >> 6);
 
-        uint32_t bit_pos = 1 << (index % 64);
-        uint32_t found = ddt->ddt_bloom->bf[index] & bit_pos;
+        uint64_t found = (((ddt->ddt_bloom->bf)[index]) & bit_pos);
 
+#if 0
         if(found) 
             ddt->ddt_bloom->hits++;
         else
             ddt->ddt_bloom->misses++;
+#endif
 
         if(add && !found) {
                    ddt->ddt_bloom->bf[index] = 
                        ddt->ddt_bloom->bf[index] | bit_pos;
         }
 
+#if 0
 #if defined(_KERNEL)
         printk("ZFS: ddt_check_bloom: index=%x, bit_pos=%x, found=%x\n", 
             index, bit_pos, found);
@@ -756,6 +763,7 @@ ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
         if(ddt->ddt_bloom->misses % 100 == 0)
             printk("ZFS: ddt_check_bloom: total misses = %d\n",
                 (int)ddt->ddt_bloom->misses);
+#endif
 #endif
 
         return found;
@@ -778,16 +786,19 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
         int found = ddt_check_bloom(ddt, &dde_search, add);
         if(found)
 	    dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+
+#if 0
         else { /* VINAY: DEBUG logic */
             dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 #if defined(_KERNEL)
             if(dde != NULL) {
                     printk("ZFS: ddt_lookup: dde should have been null,"
-                           "will be as assert later");
+                           "will be an assert later");
             }
 #endif
             ASSERT(dde == NULL);
         }
+#endif
 
 	if (dde == NULL) {
 		if (!add)
@@ -921,12 +932,6 @@ ddt_create(spa_t *spa)
 {
 	enum zio_checksum c;
 
-        /* VINAY: Debug message */
-#if defined(_KERNEL)
-        printk("ZFS: ddt_create: ZIO_CHECKSUM_FUNCTIONS = %d\n", 
-            (int)ZIO_CHECKSUM_FUNCTIONS);
-#endif
-
 	spa->spa_dedup_checksum = ZIO_DEDUPCHECKSUM;
 
         /* VINAY: Add bloom  filter here */
@@ -982,16 +987,22 @@ ddt_unload(spa_t *spa)
 {
 	enum zio_checksum c;
 
+        /* VINAY: The cause of pain. For some reason I cannot understand, 
+           ddt_unload is called from spa_unload while bootstarpping a pool!
+           This was effectively causing a kernel panic on null pointer 
+           access */
+        if(ddt_bloom != NULL) {
+                vmem_free(ddt_bloom->bf, ddt_bloom->size);
+                kmem_free(ddt_bloom, sizeof(ddt_bloom_t));
+                ddt_bloom = NULL;
+        }
+
 	for (c = 0; c < ZIO_CHECKSUM_FUNCTIONS; c++) {
 		if (spa->spa_ddt[c]) {
 			ddt_table_free(spa->spa_ddt[c]);
 			spa->spa_ddt[c] = NULL;
 		}
 	}
-
-        vmem_free(ddt_bloom->bf, ddt_bloom->size);
-        kmem_free(ddt_bloom, sizeof(ddt_bloom_t));
-        ddt_bloom = NULL;
 }
 
 boolean_t

@@ -1268,6 +1268,10 @@ spa_unload(spa_t *spa)
 		spa->spa_meta_objset = NULL;
 	}
 
+#if defined(_KERNEL)
+        printk("ZFS: spa.c: spa_unload: Calling ddt_unload\n");
+#endif
+
 	ddt_unload(spa);
 
 	spa_config_enter(spa, SCL_ALL, FTAG, RW_WRITER);

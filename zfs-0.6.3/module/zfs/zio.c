@@ -2366,6 +2366,7 @@ zio_ddt_free(zio_t *zio)
 	ASSERT(zio->io_child_type == ZIO_CHILD_LOGICAL);
 
 	ddt_enter(ddt);
+
 	freedde = dde = ddt_lookup(ddt, bp, B_TRUE);
 	if (dde) {
 		ddp = ddt_phys_select(dde, bp);
