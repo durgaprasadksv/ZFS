@@ -42,6 +42,7 @@
 
 static kmem_cache_t *ddt_cache;
 static kmem_cache_t *ddt_entry_cache;
+static kmem_cache_t *ddt_entry_new_cache;
 static ddt_bloom_t  *ddt_bloom = NULL;
 
 /*
@@ -672,6 +673,8 @@ ddt_init(void)
 	    sizeof (ddt_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
 	ddt_entry_cache = kmem_cache_create("ddt_entry_cache",
 	    sizeof (ddt_entry_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
+        ddt_entry_new_cache = kmem_cache_create("ddt_entry_new_cache",
+            sizeof (ddt_entry_new_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
 }
 
 void
@@ -725,6 +728,13 @@ ddt_remove(ddt_t *ddt, ddt_entry_t *dde)
 static boolean_t 
 ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
 {
+#if defined(_KERNEL)
+        if(ddt_bloom == NULL || ddt->ddt_bloom == NULL || 
+          ddt->ddt_bloom->bf == NULL) {
+                printk("ZFS: ddt.c: ddt_check_bloom: ddt_bloom is null!!\n");
+                return 1;
+        }
+#endif
         // uint32_t index = (uint32_t) dde_search->dde_key.ddk_cksum.zc_word[3];
         uint64_t index = dde_search->dde_key.ddk_cksum.zc_word[2];
 
@@ -739,7 +749,7 @@ ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
            is an array of uint64_t's */
         index = (index >> 6);
 
-        uint64_t found = (((ddt->ddt_bloom->bf)[index]) & bit_pos);
+        uint64_t found = (ddt->ddt_bloom->bf[index]) & bit_pos;
 
 #if 0
         if(found) 
@@ -752,6 +762,7 @@ ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
                    ddt->ddt_bloom->bf[index] = 
                        ddt->ddt_bloom->bf[index] | bit_pos;
         }
+
 
 #if 0
 #if defined(_KERNEL)
@@ -786,7 +797,6 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
         int found = ddt_check_bloom(ddt, &dde_search, add);
         if(found)
 	    dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-
 #if 0
         else { /* VINAY: DEBUG logic */
             dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
@@ -803,6 +813,15 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	if (dde == NULL) {
 		if (!add)
 			return (NULL);
+                /* VINAY: Absolutely bad: Bloom filter is useless :-| */
+                dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+#if defined(_KERNEL)
+                if(dde != NULL) {
+                        printk("ZFS: ddt.c: ddt_lookup: dde cannot be found "
+                               " at this place\n");
+                }
+#endif
+                ASSERT(dde == NULL);
 		dde = ddt_alloc(&dde_search.dde_key);
 		avl_insert(&ddt->ddt_tree, dde, where);
 	}
@@ -934,11 +953,27 @@ ddt_create(spa_t *spa)
 
 	spa->spa_dedup_checksum = ZIO_DEDUPCHECKSUM;
 
-        /* VINAY: Add bloom  filter here */
+        /* VINAY: Add bloom filter here */
         ddt_bloom = kmem_zalloc(sizeof(ddt_bloom_t), KM_SLEEP);
-        ddt_bloom->size = PAGE_SIZE * 262144; 
-        ddt_bloom->bf = vmem_alloc(ddt_bloom->size, KM_SLEEP);
-        bzero(ddt_bloom->bf, ddt_bloom->size);
+        if(ddt_bloom != NULL) {
+                ddt_bloom->size = PAGE_SIZE * 262144; 
+                ddt_bloom->bf = vmem_alloc(ddt_bloom->size, KM_SLEEP);
+                // ddt_bloom->bf = vmalloc(ddt_bloom->size);
+                if(ddt_bloom->bf != NULL)
+                        bzero(ddt_bloom->bf, ddt_bloom->size);
+                else {
+#if defined(_KERNEL)
+                        printk("ZFS: ddt.c: ddt_create: Failed to alloc bf\n");
+#endif 
+                        kmem_free(ddt_bloom, sizeof(ddt_bloom_t));
+                        ddt_bloom = NULL;         
+                }
+        }
+        else {
+#if defined(_KERNEL)
+                printk("ZFS: ddt.c: ddt_create: Failed to alloc ddt_bloom\n");
+#endif
+        }
 
 	for (c = 0; c < ZIO_CHECKSUM_FUNCTIONS; c++)
 		spa->spa_ddt[c] = ddt_table_alloc(spa, c);
@@ -991,7 +1026,14 @@ ddt_unload(spa_t *spa)
            ddt_unload is called from spa_unload while bootstarpping a pool!
            This was effectively causing a kernel panic on null pointer 
            access */
+#if defined(_KERNEL)
+        printk("ZFS: ddt.c: In ddt_unload\n");
+#endif
+
         if(ddt_bloom != NULL) {
+#if defined(_KERNEL)
+                printk("ZFS: ddt.c: Freeing the bloom filter\n");
+#endif
                 vmem_free(ddt_bloom->bf, ddt_bloom->size);
                 kmem_free(ddt_bloom, sizeof(ddt_bloom_t));
                 ddt_bloom = NULL;
@@ -1040,6 +1082,9 @@ ddt_class_contains(spa_t *spa, enum ddt_class max_class, const blkptr_t *bp)
 ddt_entry_t *
 ddt_repair_start(ddt_t *ddt, const blkptr_t *bp)
 {
+#if defined(_KERNEL)
+        printk("ZFS: ddt.c: ddt_repair_start: Starting ddt_repair_start\n");
+#endif
 	ddt_key_t ddk;
 	ddt_entry_t *dde;
 	enum ddt_type type;
@@ -1070,6 +1115,9 @@ ddt_repair_start(ddt_t *ddt, const blkptr_t *bp)
 void
 ddt_repair_done(ddt_t *ddt, ddt_entry_t *dde)
 {
+#if defined(_KERNEL)
+        printk("ZFS: ddt.c: ddt_repair_done: Ending ddt_repair_done\n");
+#endif
 	avl_index_t where;
 
 	ddt_enter(ddt);
@@ -1094,6 +1142,10 @@ ddt_repair_entry_done(zio_t *zio)
 static void
 ddt_repair_entry(ddt_t *ddt, ddt_entry_t *dde, ddt_entry_t *rdde, zio_t *rio)
 {
+#if defined(_KERNEL)
+        printk("ZFS: ddt.c: ddt_repair_entry: Entering ddt_repair_entry\n");
+#endif
+
 	ddt_phys_t *ddp = dde->dde_phys;
 	ddt_phys_t *rddp = rdde->dde_phys;
 	ddt_key_t *ddk = &dde->dde_key;
@@ -1310,6 +1362,10 @@ ddt_walk(spa_t *spa, ddt_bookmark_t *ddb, ddt_entry_t *dde)
 
 	return (SET_ERROR(ENOENT));
 }
+
+/* VINAY: Hash table implememtation.
+   No time to hook up makefile deps.
+   hence adding it in the same file */
 
 #if defined(_KERNEL) && defined(HAVE_SPL)
 module_param(zfs_dedup_prefetch, int, 0644);
