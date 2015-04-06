@@ -40,9 +40,29 @@
 #include <sys/systm.h>
 #endif
 
+/*********************** Hash Table Implementation **************************/
+#define NUM_BUCKET_BITS  11
+#define NUM_BUCKETS      (1 << NUM_BUCKET_BITS)
+/* hardcoding sha256 index as 3, probably a bad idea. 
+   Fix later if possible */
+#define GET_HASH_KEY(sha256, i) \
+        (((sha256)[3] >> (i * NUM_BUCKET_BITS)) & ((NUM_BUCKETS)-1))
+
+ddt_entry_new_t *ddt_hash[NUM_BUCKETS];
+ddt_entry_new_t *last_bucket;
+
+static void hash_table_insert(ddt_entry_new_t *dde);
+static void hash_table_free(void);
+static inline boolean_t is_equal(ddt_entry_new_t *dde1, ddt_entry_new_t *dde2);
+
+static ddt_entry_new_t *ddt_alloc_new(const ddt_key_t *ddk);
+static void ddt_free_new(ddt_entry_new_t *dde);
+
+static kmem_cache_t *ddt_entry_new_cache;
+/****************************************************************************/
+
 static kmem_cache_t *ddt_cache;
 static kmem_cache_t *ddt_entry_cache;
-static kmem_cache_t *ddt_entry_new_cache;
 static ddt_bloom_t  *ddt_bloom = NULL;
 
 /*
@@ -784,6 +804,7 @@ ddt_entry_t *
 ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 {
 	ddt_entry_t *dde = NULL, dde_search;
+        ddt_entry_new_t *dde_new = NULL;
 	enum ddt_type type;
 	enum ddt_class class;
 	avl_index_t where;
@@ -823,6 +844,9 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 #endif
                 ASSERT(dde == NULL);
 		dde = ddt_alloc(&dde_search.dde_key);
+                dde_new = ddt_alloc_new(&dde_search.dde_key);
+
+                hash_table_insert(dde_new);
 		avl_insert(&ddt->ddt_tree, dde, where);
 	}
 
@@ -1330,6 +1354,9 @@ ddt_sync(spa_t *spa, uint64_t txg)
 
 	(void) zio_wait(rio);
 
+        /* VINAY: Free up the hash table */
+        hash_table_free();
+
 	dmu_tx_commit(tx);
 }
 
@@ -1364,8 +1391,107 @@ ddt_walk(spa_t *spa, ddt_bookmark_t *ddb, ddt_entry_t *dde)
 }
 
 /* VINAY: Hash table implememtation.
-   No time to hook up makefile deps.
-   hence adding it in the same file */
+   No time to hook up makefile deps. Hence adding it in the same file */
+static void
+hash_table_insert(ddt_entry_new_t *dde)
+{
+        uint32_t key, i;
+
+        for(i = 0; i < 5; i++) {
+                key = GET_HASH_KEY(dde->dde_key.ddk_cksum.zc_word, i);
+#if defined(_KERNEL)
+                printk("ZFS: ddt.c: hash_table_insert: cksum=%llx, key=%x, i=%x\n",
+                       (u_longlong_t)dde->dde_key.ddk_cksum.zc_word[3], key, i);
+#endif
+                if((ddt_hash[key] == NULL) || is_equal(dde, ddt_hash[key])) {
+                        ddt_hash[key] = dde;
+                        return;
+                }
+        }
+
+        /* Store it in the last bucket chain. The next pointer is needed only 
+           in this case. Try to eliminate it later */
+        dde->next = last_bucket;
+        last_bucket = dde->next;
+
+        return;
+}
+
+#if 0
+static ddt_entry_new_t *
+hash_table_fetch(ddt_entry_new_t *dde, boolean_t add)
+{
+        uint32_t key;
+        int pos = -1;
+
+        for(i = 0; i < 5; i++) {
+               key = GET_HASH_KEY(dde->dde_key.ddk_cksum.zc_word, i);
+               if(ddt_hash[key] == NULL) {
+                       if(pos < 0)
+                            pos = i;      
+               }
+               else if(is_equal(dde, ddt_hash[key])) {
+                       if
+               }
+        }
+}
+#endif
+
+static void
+hash_table_free(void)
+{
+        int i;
+        ddt_entry_new_t *temp;
+
+        for(i = 0; i < NUM_BUCKETS; i++) {
+               if(ddt_hash[i] != NULL) {
+                       ddt_free_new(ddt_hash[i]);
+                       ddt_hash[i] = NULL; 
+               }
+        }
+
+        while(last_bucket != NULL) {
+                temp = last_bucket;
+                last_bucket = last_bucket->next;
+                ddt_free_new(temp);
+        }
+
+        return;
+}
+
+static inline boolean_t
+is_equal(ddt_entry_new_t *dde1, ddt_entry_new_t *dde2)
+{
+        int i;
+        for(i = 0; i < 4; i++) {
+                if(dde1->dde_key.ddk_cksum.zc_word[i] != 
+                     dde2->dde_key.ddk_cksum.zc_word[i])
+                        return 0;
+        }
+
+        return 1;
+}
+
+static ddt_entry_new_t *
+ddt_alloc_new(const ddt_key_t *ddk)
+{
+	ddt_entry_new_t *dde;
+
+	dde = kmem_cache_alloc(ddt_entry_new_cache, KM_PUSHPAGE);
+	bzero(dde, sizeof (ddt_entry_new_t));
+
+	dde->dde_key = *ddk;
+
+	return (dde);
+}
+
+static void
+ddt_free_new(ddt_entry_new_t *dde)
+{
+	int p;
+
+	kmem_cache_free(ddt_entry_new_cache, dde);
+}
 
 #if defined(_KERNEL) && defined(HAVE_SPL)
 module_param(zfs_dedup_prefetch, int, 0644);
