@@ -117,6 +117,18 @@ struct ddt_entry {
 	avl_node_t	dde_node;
 };
 
+typedef struct ddt_entry_new {
+	ddt_key_t	dde_key;
+	ddt_phys_t	dde_phys[DDT_PHYS_TYPES];
+	zio_t		*dde_lead_zio[DDT_PHYS_TYPES];
+	void		*dde_repair_data;
+	enum ddt_type	dde_type;
+	enum ddt_class	dde_class;
+	uint8_t		dde_loading;
+	uint8_t		dde_loaded;
+	kcondvar_t	dde_cv;
+} ddt_entry_new_t;
+
 /* VINAY: Bloom filter type */
 typedef struct ddt_bloom {
         uint64_t        size;
