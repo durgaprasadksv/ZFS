@@ -1537,10 +1537,10 @@ ddt_free_new(ddt_entry_new_t *dde)
 static inline uint64_t 
 RDTSC(void)
 {
-  unsigned int hi = 0, lo = 0;
+        unsigned int hi = 0, lo = 0;
 
-  __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
-  return ((uint64_t)hi << 32) | lo;
+        __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
+        return ((uint64_t)hi << 32) | lo;
 }
 
 #if defined(_KERNEL) && defined(HAVE_SPL)
