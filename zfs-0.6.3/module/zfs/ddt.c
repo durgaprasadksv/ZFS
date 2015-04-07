@@ -57,6 +57,7 @@ static inline boolean_t is_equal(ddt_entry_new_t *dde1, ddt_entry_new_t *dde2);
 
 static ddt_entry_new_t *ddt_alloc_new(const ddt_key_t *ddk);
 static void ddt_free_new(ddt_entry_new_t *dde);
+static inline uint64_t RDTSC(void);
 
 static kmem_cache_t *ddt_entry_new_cache;
 /****************************************************************************/
@@ -809,6 +810,7 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	enum ddt_class class;
 	avl_index_t where;
 	int error;
+        uint64_t prior, after;
 
 	ASSERT(MUTEX_HELD(&ddt->ddt_lock));
 
@@ -835,8 +837,11 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 		if (!add)
 			return (NULL);
                 /* VINAY: Absolutely bad: Bloom filter is useless :-| */
+                prior = RDTSC();
                 dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+                after = RDTSC();
 #if defined(_KERNEL)
+                printk("ZFS: ddt.c: ddt_lookup: Time spent looking up: %llu\n", (after - prior));
                 if(dde != NULL) {
                         printk("ZFS: ddt.c: ddt_lookup: dde cannot be found "
                                " at this place\n");
@@ -845,8 +850,14 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
                 ASSERT(dde == NULL);
 		dde = ddt_alloc(&dde_search.dde_key);
                 dde_new = ddt_alloc_new(&dde_search.dde_key);
-
+                prior = RDTSC();
                 hash_table_insert(dde_new);
+                after = RDTSC();
+#if defined(_KERNEL)
+                printk("ZFS: ddt.c: ddt_lookup: Time spent inserting in hash: %llu\n",
+                   (after - prior));
+#endif
+
 		avl_insert(&ddt->ddt_tree, dde, where);
 	}
 
@@ -861,6 +872,7 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	ddt_exit(ddt);
 
 	error = ENOENT;
+        prior = RDTSC();
 
 	for (type = 0; type < DDT_TYPES; type++) {
 		for (class = 0; class < DDT_CLASSES; class++) {
@@ -886,6 +898,12 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 
 	if (error == 0)
 		ddt_stat_update(ddt, dde, -1ULL);
+
+        after = RDTSC();
+#if defined(_KERNEL)
+        printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
+            (after - prior));
+#endif
 
 	cv_broadcast(&dde->dde_cv);
 
@@ -1399,9 +1417,11 @@ hash_table_insert(ddt_entry_new_t *dde)
 
         for(i = 0; i < 5; i++) {
                 key = GET_HASH_KEY(dde->dde_key.ddk_cksum.zc_word, i);
+#if 0
 #if defined(_KERNEL)
                 printk("ZFS: ddt.c: hash_table_insert: cksum=%llx, key=%x, i=%x\n",
                        (u_longlong_t)dde->dde_key.ddk_cksum.zc_word[3], key, i);
+#endif
 #endif
                 if((ddt_hash[key] == NULL) || is_equal(dde, ddt_hash[key])) {
                         ddt_hash[key] = dde;
@@ -1417,12 +1437,13 @@ hash_table_insert(ddt_entry_new_t *dde)
         return;
 }
 
-#if 0
 static ddt_entry_new_t *
-hash_table_fetch(ddt_entry_new_t *dde, boolean_t add)
+hash_table_fetch(ddt_entry_new_t *dde, boolean_t add, int *found)
 {
         uint32_t key;
-        int pos = -1;
+        int pos = -1, i;
+        ddt_entry_new_t *temp;
+        ddt_entry_new_t *new_dde = NULL;
 
         for(i = 0; i < 5; i++) {
                key = GET_HASH_KEY(dde->dde_key.ddk_cksum.zc_word, i);
@@ -1431,14 +1452,35 @@ hash_table_fetch(ddt_entry_new_t *dde, boolean_t add)
                             pos = i;      
                }
                else if(is_equal(dde, ddt_hash[key])) {
-                       if
+                       *found = 1;
+                       return ddt_hash[key];
                }
         }
-}
-#endif
 
-static void
-hash_table_free(void)
+        temp = last_bucket;
+        while(temp != NULL) {
+                if(is_equal(dde, temp)) {
+                    *found = 1;
+                    return temp;
+                }
+         }
+
+        if(add) {
+                new_dde = ddt_alloc_new(&(dde->dde_key));
+                if(pos >= 0) {
+                        ddt_hash[pos] = new_dde;
+                }
+                else {
+                        new_dde->next = last_bucket;
+                        last_bucket = new_dde->next;
+                }
+        }
+
+        *found = 0;
+        return new_dde;
+}
+
+static void hash_table_free(void)
 {
         int i;
         ddt_entry_new_t *temp;
@@ -1488,9 +1530,17 @@ ddt_alloc_new(const ddt_key_t *ddk)
 static void
 ddt_free_new(ddt_entry_new_t *dde)
 {
-	int p;
-
 	kmem_cache_free(ddt_entry_new_cache, dde);
+}
+
+/* assembly code to read the TSC */
+static inline uint64_t 
+RDTSC(void)
+{
+  unsigned int hi = 0, lo = 0;
+
+  __asm__ volatile("rdtsc" : "=a" (lo), "=d" (hi));
+  return ((uint64_t)hi << 32) | lo;
 }
 
 #if defined(_KERNEL) && defined(HAVE_SPL)
