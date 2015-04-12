@@ -41,25 +41,32 @@
 #endif
 
 /*********************** Hash Table Implementation **************************/
-#define NUM_BUCKET_BITS  11
+ /* DP: 4096 buckets.*/
+#define NUM_BUCKET_BITS  12
 #define NUM_BUCKETS      (1 << NUM_BUCKET_BITS)
 /* hardcoding sha256 index as 3, probably a bad idea. 
    Fix later if possible */
 #define GET_HASH_KEY(sha256, i) \
         (((sha256)[3] >> (i * NUM_BUCKET_BITS)) & ((NUM_BUCKETS)-1))
 
-ddt_entry_new_t *ddt_hash[NUM_BUCKETS];
-ddt_entry_new_t *last_bucket;
+/* DP: TODO: A better Hash function ?? */
+#define GET_HASH_SLOT(sha256) \
+        ((sha256[3]) & (NUM_BUCKETS -1))
 
-static void hash_table_insert(ddt_entry_new_t *dde);
+/* Hashtable: Each entry is a list of hashes hashed using GET_HASH_SLOT*/
+ddt_entry_t *ddt_hash[NUM_BUCKETS];
+
+
+static void hash_table_insert(ddt_entry_t *dde);
+static ddt_entry_t* hash_table_fetch(ddt_entry_t *dde);
 static void hash_table_free(void);
-static inline boolean_t is_equal(ddt_entry_new_t *dde1, ddt_entry_new_t *dde2);
+static inline boolean_t is_equal(ddt_entry_t *dde1, ddt_entry_t *dde2);
 
-static ddt_entry_new_t *ddt_alloc_new(const ddt_key_t *ddk);
-static void ddt_free_new(ddt_entry_new_t *dde);
+//static ddt_entry_t *ddt_alloc_new(const ddt_key_t *ddk);
+//static void ddt_free_new(ddt_entry_new_t *dde);
 static inline uint64_t RDTSC(void);
 
-static kmem_cache_t *ddt_entry_new_cache;
+//static kmem_cache_t *ddt_entry_new_cache;
 /****************************************************************************/
 
 static kmem_cache_t *ddt_cache;
@@ -694,8 +701,9 @@ ddt_init(void)
 	    sizeof (ddt_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
 	ddt_entry_cache = kmem_cache_create("ddt_entry_cache",
 	    sizeof (ddt_entry_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
-        ddt_entry_new_cache = kmem_cache_create("ddt_entry_new_cache",
-            sizeof (ddt_entry_new_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
+	/*
+    ddt_entry_new_cache = kmem_cache_create("ddt_entry_new_cache",
+        sizeof (ddt_entry_new_t), 0, NULL, NULL, NULL, NULL, NULL, 0); */
 }
 
 void
@@ -749,6 +757,7 @@ ddt_remove(ddt_t *ddt, ddt_entry_t *dde)
 static boolean_t 
 ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
 {
+
 #if defined(_KERNEL)
         if(ddt_bloom == NULL || ddt->ddt_bloom == NULL || 
           ddt->ddt_bloom->bf == NULL) {
@@ -805,23 +814,110 @@ ddt_entry_t *
 ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 {
 	ddt_entry_t *dde = NULL, dde_search;
-        ddt_entry_new_t *dde_new = NULL;
 	enum ddt_type type;
 	enum ddt_class class;
 	avl_index_t where;
 	int error;
-        uint64_t prior, after;
+   	 uint64_t prior, after;
+
 
 	ASSERT(MUTEX_HELD(&ddt->ddt_lock));
 
 	ddt_key_fill(&dde_search.dde_key, bp);
 
-        /* VINAY: Plug-in bloom filter logic */
-        int found = ddt_check_bloom(ddt, &dde_search, add);
-        if(found)
+    
+    int found = ddt_check_bloom(ddt, &dde_search, add);
+    	
+    if (!found) {
+    	/* DP: We done need to do any lookups here. Insert in AVL and HashTable */
+    	if (!add) 
+    		return NULL;
+ 		
+    	/* DP: Fuck we have to still do a lookup before we insert */
+    	dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+    	ASSERT (dde == NULL); /* Should always be NULL since we have never seen this before */
+
+    	dde = ddt_alloc(&dde_search.dde_key);
+    	avl_insert(&ddt->ddt_tree, dde, where); /* DP: TODO Remove this */
+    	hash_table_insert(dde);
+
+    	dde->dde_type = DDT_TYPES;	/* will be DDT_TYPES if no entry found */
+    	dde->dde_class = DDT_CLASSES;	/* will be DDT_CLASSES if no entry found */
+    	dde->dde_loaded = B_TRUE;
+    	dde->dde_loading = B_FALSE;
+    	ddt_stat_update(ddt, dde, -1ULL); /*Safe. No other thread will have access */
+
+    	return dde;
+
+    } else {
+    	/* LOOK UP THE DISK*/
+		
+		/* DP: dde will be null here for an old hash: 
+		  We need to look up the hash table to find the hash
+		   if not then alloc it*/
+		dde = hash_table_fetch(&dde_search);
+		
+		if (dde == NULL) {
+			dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+			ASSERT(dde == NULL); /*We shouldnt find it in AVL either */
+			dde = ddt_alloc(&dde_search.dde_key);
+			avl_insert(&ddt->ddt_tree, dde, where);
+			hash_table_insert(dde);
+		}
+		while (dde->dde_loading)
+			cv_wait(&dde->dde_cv, &ddt->ddt_lock);
+
+		if (dde->dde_loaded)
+			return (dde);
+
+		dde->dde_loading = B_TRUE;
+		ddt_exit(ddt);
+		error = ENOENT;
+		    
+		prior = RDTSC();
+		for (type = 0; type < DDT_TYPES; type++) {
+			for (class = 0; class < DDT_CLASSES; class++) {
+				error = ddt_object_lookup(ddt, type, class, dde);
+				if (error != ENOENT)
+					break;
+			}
+			if (error != ENOENT)
+				break;
+		}
+
+		ASSERT(error == 0 || error == ENOENT);
+
+		ddt_enter(ddt);
+		ASSERT(dde->dde_loaded == B_FALSE);
+		ASSERT(dde->dde_loading == B_TRUE);
+
+		dde->dde_type = type;	/* will be DDT_TYPES if no entry found */
+		dde->dde_class = class;	/* will be DDT_CLASSES if no entry found */
+		dde->dde_loaded = B_TRUE;
+		dde->dde_loading = B_FALSE;
+
+		if (error == 0)
+			ddt_stat_update(ddt, dde, -1ULL);
+
+		after = RDTSC();
+		#if defined(_KERNEL)
+		    printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
+		        (after - prior));
+		#endif
+
+		cv_broadcast(&dde->dde_cv);
+
+		/* Store the new DDT in the HashTable. We might need it again */
+		return (dde);
+    }
+    
+
+/*
+
+    if(found) 
 	    dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 #if 0
-        else { /* VINAY: DEBUG logic */
+        else { 
             dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 #if defined(_KERNEL)
             if(dde != NULL) {
@@ -834,30 +930,29 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 #endif
 
 	if (dde == NULL) {
-		if (!add)
+		if (!add) {
 			return (NULL);
-                /* VINAY: Absolutely bad: Bloom filter is useless :-| */
-                prior = RDTSC();
-                dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-                after = RDTSC();
+		}
+     	
+        prior = RDTSC();
+        dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+        after = RDTSC();
 #if defined(_KERNEL)
-                printk("ZFS: ddt.c: ddt_lookup: Time spent looking up: %llu\n", (after - prior));
-                if(dde != NULL) {
-                        printk("ZFS: ddt.c: ddt_lookup: dde cannot be found "
-                               " at this place\n");
-                }
+        printk("ZFS: ddt.c: ddt_lookup: Time spent in AVL look up: %llu\n", (after - prior));
+        if(dde != NULL) {
+                printk("ZFS: ddt.c: ddt_lookup: dde cannot be found in AVL\n");
+        }
 #endif
-                ASSERT(dde == NULL);
+        ASSERT(dde == NULL);
 		dde = ddt_alloc(&dde_search.dde_key);
-                dde_new = ddt_alloc_new(&dde_search.dde_key);
-                prior = RDTSC();
-                hash_table_insert(dde_new);
-                after = RDTSC();
+        dde_new = ddt_alloc_new(&dde_search.dde_key);
+        prior = RDTSC();
+        hash_table_insert(dde_new);
+        after = RDTSC();
 #if defined(_KERNEL)
-                printk("ZFS: ddt.c: ddt_lookup: Time spent inserting in hash: %llu\n",
-                   (after - prior));
+        printk("ZFS: ddt.c: ddt_lookup: Time spent inserting in hash: %llu\n",
+           (after - prior));
 #endif
-
 		avl_insert(&ddt->ddt_tree, dde, where);
 	}
 
@@ -891,8 +986,8 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	ASSERT(dde->dde_loaded == B_FALSE);
 	ASSERT(dde->dde_loading == B_TRUE);
 
-	dde->dde_type = type;	/* will be DDT_TYPES if no entry found */
-	dde->dde_class = class;	/* will be DDT_CLASSES if no entry found */
+	dde->dde_type = type;	
+	dde->dde_class = class;	
 	dde->dde_loaded = B_TRUE;
 	dde->dde_loading = B_FALSE;
 
@@ -908,6 +1003,9 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	cv_broadcast(&dde->dde_cv);
 
 	return (dde);
+
+	*/
+
 }
 
 void
@@ -1411,8 +1509,10 @@ ddt_walk(spa_t *spa, ddt_bookmark_t *ddb, ddt_entry_t *dde)
 /* VINAY: Hash table implememtation.
    No time to hook up makefile deps. Hence adding it in the same file */
 static void
-hash_table_insert(ddt_entry_new_t *dde)
+hash_table_insert(ddt_entry_t *dde)
 {
+
+	/*
         uint32_t key, i;
 
         for(i = 0; i < 5; i++) {
@@ -1429,80 +1529,72 @@ hash_table_insert(ddt_entry_new_t *dde)
                 }
         }
 
-        /* Store it in the last bucket chain. The next pointer is needed only 
-           in this case. Try to eliminate it later */
         dde->next = last_bucket;
         last_bucket = dde->next;
+    */
+        uint32_t slot;
+        ddt_entry_t* start = NULL;
 
-        return;
+        slot = GET_HASH_SLOT(dde->dde_key.ddk_cksum.zc_word);
+        start = ddt_hash[slot];
+        ddt_hash[slot] = dde; /*make this the head */
+
+        if (start != NULL) {
+        	dde->next = start; /*link it to previous start */
+        }
 }
 
-static ddt_entry_new_t *
-hash_table_fetch(ddt_entry_new_t *dde, boolean_t add, int *found)
+static ddt_entry_t*
+hash_table_fetch(ddt_entry_t *dde)
 {
-        uint32_t key;
-        int pos = -1, i;
-        ddt_entry_new_t *temp;
-        ddt_entry_new_t *new_dde = NULL;
+	
+        uint32_t slot, found=0;
+        ddt_entry_t *start = NULL; 
+	ddt_entry_t *ret = NULL;
 
-        for(i = 0; i < 5; i++) {
-               key = GET_HASH_KEY(dde->dde_key.ddk_cksum.zc_word, i);
-               if(ddt_hash[key] == NULL) {
-                       if(pos < 0)
-                            pos = i;      
-               }
-               else if(is_equal(dde, ddt_hash[key])) {
-                       *found = 1;
-                       return ddt_hash[key];
-               }
+        slot = GET_HASH_SLOT(dde->dde_key.ddk_cksum.zc_word);
+        start = ddt_hash[slot];
+      	
+
+        while(start != NULL) {
+        	if (is_equal(dde, start)) {
+        		found = 1;
+			ret = dde;
+			break;
+        	}
+        	start = start->next;
         }
-
-        temp = last_bucket;
-        while(temp != NULL) {
-                if(is_equal(dde, temp)) {
-                    *found = 1;
-                    return temp;
-                }
-         }
-
-        if(add) {
-                new_dde = ddt_alloc_new(&(dde->dde_key));
-                if(pos >= 0) {
-                        ddt_hash[pos] = new_dde;
-                }
-                else {
-                        new_dde->next = last_bucket;
-                        last_bucket = new_dde->next;
-                }
-        }
-
-        *found = 0;
-        return new_dde;
+	return ret;
 }
 
 static void hash_table_free(void)
 {
         int i;
-        ddt_entry_new_t *temp;
-
+        ddt_entry_t *temp, *curr;
+	/* For each bucket free each chain of hashes */
         for(i = 0; i < NUM_BUCKETS; i++) {
                if(ddt_hash[i] != NULL) {
+			/*
                        ddt_free_new(ddt_hash[i]);
-                       ddt_hash[i] = NULL; 
+                       ddt_hash[i] = NULL;
+			*/
+			temp = ddt_hash[i];
+			while(temp != NULL) {
+				curr = temp;
+				temp = temp->next;
+				if (curr != NULL) {
+					ddt_free(curr);
+				}
+			}
+			 
                }
+	       ddt_hash[i] = NULL;
         }
-
-        while(last_bucket != NULL) {
-                temp = last_bucket;
-                last_bucket = last_bucket->next;
-                ddt_free_new(temp);
-        }
-
         return;
 }
 
 static inline boolean_t
-is_equal(ddt_entry_new_t *dde1, ddt_entry_new_t *dde2)
+is_equal(ddt_entry_t *dde1, ddt_entry_t *dde2)
 {
         int i;
         for(i = 0; i < 4; i++) {
@@ -1513,7 +1605,7 @@ is_equal(ddt_entry_new_t *dde1, ddt_entry_new_t *dde2)
 
         return 1;
 }
-
+/*
 static ddt_entry_new_t *
 ddt_alloc_new(const ddt_key_t *ddk)
 {
@@ -1523,7 +1615,7 @@ ddt_alloc_new(const ddt_key_t *ddk)
 	bzero(dde, sizeof (ddt_entry_new_t));
 
 	dde->dde_key = *ddk;
-
+	dde->next = NULL;
 	return (dde);
 }
 
@@ -1532,6 +1624,7 @@ ddt_free_new(ddt_entry_new_t *dde)
 {
 	kmem_cache_free(ddt_entry_new_cache, dde);
 }
+*/
 
 /* assembly code to read the TSC */
 static inline uint64_t 
@@ -1547,3 +1640,4 @@ RDTSC(void)
 module_param(zfs_dedup_prefetch, int, 0644);
 MODULE_PARM_DESC(zfs_dedup_prefetch, "Enable prefetching dedup-ed blks");
 #endif
+

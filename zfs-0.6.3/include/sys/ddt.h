@@ -114,15 +114,18 @@ struct ddt_entry {
 	uint8_t		dde_loading;
 	uint8_t		dde_loaded;
 	kcondvar_t	dde_cv;
-	avl_node_t	dde_node;
+	avl_node_t	dde_node; /* DP: TODO Remove this */
+	struct ddt_entry *next;
 };
+
+
 
 typedef struct ddt_entry_new {
 	ddt_key_t	dde_key;
 	ddt_phys_t	dde_phys[DDT_PHYS_TYPES];
 	zio_t		*dde_lead_zio[DDT_PHYS_TYPES];
 	void		*dde_repair_data;
-        struct ddt_entry_new   *next;
+    struct ddt_entry_new_t *next;
 	enum ddt_type	dde_type;
 	enum ddt_class	dde_class;
 	uint8_t		dde_loading;
@@ -267,3 +270,4 @@ extern const ddt_ops_t ddt_zap_ops;
 #endif
 
 #endif	/* _SYS_DDT_H */
+
