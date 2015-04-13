@@ -51,7 +51,7 @@
 
 /* DP: TODO: A better Hash function ?? */
 #define GET_HASH_SLOT(sha256) \
-        ((sha256[3]) & (NUM_BUCKETS -1))
+        ((sha256[2]) & (NUM_BUCKETS -1))
 
 /* Hashtable: Each entry is a list of hashes hashed using GET_HASH_SLOT*/
 ddt_entry_t *ddt_hash[NUM_BUCKETS];
@@ -780,7 +780,7 @@ ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
         index = (index >> 6);
 
         uint64_t found = (ddt->ddt_bloom->bf[index]) & bit_pos;
-
+	
 #if 0
         if(found) 
             ddt->ddt_bloom->hits++;
@@ -789,9 +789,16 @@ ddt_check_bloom(ddt_t *ddt, ddt_entry_t *dde_search, boolean_t add)
 #endif
 
         if(add && !found) {
-                   ddt->ddt_bloom->bf[index] = 
-                       ddt->ddt_bloom->bf[index] | bit_pos;
-        }
+		ddt->ddt_bloom->bf[index] = ddt->ddt_bloom->bf[index] | bit_pos;
+		#if defined(_KERNEL)
+            	printk("[%s] not found(%d) in Bloom %x Hash %x\n", __FUNCTION__, found, ddt->ddt_bloom->bf[index], dde_search->dde_key.ddk_cksum.zc_word[2]); 
+		#endif
+	} else {
+		#if defined(_KERNEL)
+		printk("[%s] found(%d) in Bloom %x Hash %x\n", __FUNCTION__, found, ddt->ddt_bloom->bf[index], dde_search->dde_key.ddk_cksum.zc_word[2]);
+		#endif
+	}
+	
 
 
 #if 0
@@ -838,7 +845,10 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
     	ASSERT (dde == NULL); /* Should always be NULL since we have never seen this before */
 
     	dde = ddt_alloc(&dde_search.dde_key);
-    	avl_insert(&ddt->ddt_tree, dde, where); /* DP: TODO Remove this */
+	#if defined(_KERNEL)
+	printk("[%s] new hash %x \n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2]);
+    	#endif
+	avl_insert(&ddt->ddt_tree, dde, where); /* DP: TODO Remove this */
     	hash_table_insert(dde);
 
     	dde->dde_type = DDT_TYPES;	/* will be DDT_TYPES if no entry found */
@@ -855,13 +865,19 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 		/* DP: dde will be null here for an old hash: 
 		  We need to look up the hash table to find the hash
 		   if not then alloc it*/
+		#if defined(_KERNEL)
+		printk("[%s] Key %x not found in Bloom\n", __FUNCTION__, dde_search.dde_key.ddk_cksum.zc_word[2]);
+		#endif
 		dde = hash_table_fetch(&dde_search);
-		
+			
 		if (dde == NULL) {
 			dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 			ASSERT(dde == NULL); /*We shouldnt find it in AVL either */
 			dde = ddt_alloc(&dde_search.dde_key);
 			avl_insert(&ddt->ddt_tree, dde, where);
+			#if defined(_KERNEL)
+			printk("[%s] dde is NULL after fetch \n", __FUNCTION__); 
+			#endif
 			hash_table_insert(dde);
 		}
 		while (dde->dde_loading)
@@ -910,102 +926,6 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 		/* Store the new DDT in the HashTable. We might need it again */
 		return (dde);
     }
-    
-
-/*
-
-    if(found) 
-	    dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-#if 0
-        else { 
-            dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-#if defined(_KERNEL)
-            if(dde != NULL) {
-                    printk("ZFS: ddt_lookup: dde should have been null,"
-                           "will be an assert later");
-            }
-#endif
-            ASSERT(dde == NULL);
-        }
-#endif
-
-	if (dde == NULL) {
-		if (!add) {
-			return (NULL);
-		}
-     	
-        prior = RDTSC();
-        dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-        after = RDTSC();
-#if defined(_KERNEL)
-        printk("ZFS: ddt.c: ddt_lookup: Time spent in AVL look up: %llu\n", (after - prior));
-        if(dde != NULL) {
-                printk("ZFS: ddt.c: ddt_lookup: dde cannot be found in AVL\n");
-        }
-#endif
-        ASSERT(dde == NULL);
-		dde = ddt_alloc(&dde_search.dde_key);
-        dde_new = ddt_alloc_new(&dde_search.dde_key);
-        prior = RDTSC();
-        hash_table_insert(dde_new);
-        after = RDTSC();
-#if defined(_KERNEL)
-        printk("ZFS: ddt.c: ddt_lookup: Time spent inserting in hash: %llu\n",
-           (after - prior));
-#endif
-		avl_insert(&ddt->ddt_tree, dde, where);
-	}
-
-	while (dde->dde_loading)
-		cv_wait(&dde->dde_cv, &ddt->ddt_lock);
-
-	if (dde->dde_loaded)
-		return (dde);
-
-	dde->dde_loading = B_TRUE;
-
-	ddt_exit(ddt);
-
-	error = ENOENT;
-        prior = RDTSC();
-
-	for (type = 0; type < DDT_TYPES; type++) {
-		for (class = 0; class < DDT_CLASSES; class++) {
-			error = ddt_object_lookup(ddt, type, class, dde);
-			if (error != ENOENT)
-				break;
-		}
-		if (error != ENOENT)
-			break;
-	}
-
-	ASSERT(error == 0 || error == ENOENT);
-
-	ddt_enter(ddt);
-
-	ASSERT(dde->dde_loaded == B_FALSE);
-	ASSERT(dde->dde_loading == B_TRUE);
-
-	dde->dde_type = type;	
-	dde->dde_class = class;	
-	dde->dde_loaded = B_TRUE;
-	dde->dde_loading = B_FALSE;
-
-	if (error == 0)
-		ddt_stat_update(ddt, dde, -1ULL);
-
-        after = RDTSC();
-#if defined(_KERNEL)
-        printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
-            (after - prior));
-#endif
-
-	cv_broadcast(&dde->dde_cv);
-
-	return (dde);
-
-	*/
-
 }
 
 void
@@ -1512,26 +1432,6 @@ static void
 hash_table_insert(ddt_entry_t *dde)
 {
 
-	/*
-        uint32_t key, i;
-
-        for(i = 0; i < 5; i++) {
-                key = GET_HASH_KEY(dde->dde_key.ddk_cksum.zc_word, i);
-#if 0
-#if defined(_KERNEL)
-                printk("ZFS: ddt.c: hash_table_insert: cksum=%llx, key=%x, i=%x\n",
-                       (u_longlong_t)dde->dde_key.ddk_cksum.zc_word[3], key, i);
-#endif
-#endif
-                if((ddt_hash[key] == NULL) || is_equal(dde, ddt_hash[key])) {
-                        ddt_hash[key] = dde;
-                        return;
-                }
-        }
-
-        dde->next = last_bucket;
-        last_bucket = dde->next;
-    */
         uint32_t slot;
         ddt_entry_t* start = NULL;
 
@@ -1542,6 +1442,9 @@ hash_table_insert(ddt_entry_t *dde)
         if (start != NULL) {
         	dde->next = start; /*link it to previous start */
         }
+	#if defined(_KERNEL)
+	printk("[%s] inserted hash %x at slot %d\n",__FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot); 
+	#endif
 }
 
 static ddt_entry_t*
@@ -1560,10 +1463,16 @@ hash_table_fetch(ddt_entry_t *dde)
         	if (is_equal(dde, start)) {
         		found = 1;
 			ret = dde;
-			break;
+			#if defined(_KERNEL)
+			printk("[%s] found hash %x at slot %d\n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot);
+			#endif
+			return ret;
         	}
         	start = start->next;
         }
+	#if defined(_KERNEL)
+	printk("[%s] no hash %x at slot %d\n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot);
+	#endif
 	return ret;
 }
 
@@ -1590,7 +1499,7 @@ static void hash_table_free(void)
                }
 	       ddt_hash[i] = NULL;
         }
-        return;
+	return;
 }
 
 static inline boolean_t
