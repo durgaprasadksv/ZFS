@@ -742,6 +742,7 @@ ddt_free(ddt_entry_t *dde)
 		    DDK_GET_PSIZE(&dde->dde_key));
 
 	cv_destroy(&dde->dde_cv);
+        bzero(dde, sizeof(ddt_entry_t));
 	kmem_cache_free(ddt_entry_cache, dde);
 }
 
@@ -825,7 +826,7 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	enum ddt_class class;
 	avl_index_t where;
 	int error;
-   	 uint64_t prior, after;
+   	uint64_t prior, after;
 
 
 	ASSERT(MUTEX_HELD(&ddt->ddt_lock));
@@ -833,31 +834,40 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	ddt_key_fill(&dde_search.dde_key, bp);
 
     
-    int found = ddt_check_bloom(ddt, &dde_search, add);
+        int found = ddt_check_bloom(ddt, &dde_search, add);
     	
-    if (!found) {
+        if (!found) {
     	/* DP: We done need to do any lookups here. Insert in AVL and HashTable */
-    	if (!add) 
-    		return NULL;
+    	    if (!add) 
+    	            return NULL;
  		
-    	/* DP: Fuck we have to still do a lookup before we insert */
-    	dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-    	ASSERT (dde == NULL); /* Should always be NULL since we have never seen this before */
+    	    /* DP: Fuck we have to still do a lookup before we insert */
+    	    dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+    	    ASSERT (dde == NULL); /* Should always be NULL since we have never seen this before */
 
-    	dde = ddt_alloc(&dde_search.dde_key);
-	#if defined(_KERNEL)
-	printk("[%s] new hash %x \n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2]);
-    	#endif
-	avl_insert(&ddt->ddt_tree, dde, where); /* DP: TODO Remove this */
-    	hash_table_insert(dde);
+    	    dde = ddt_alloc(&dde_search.dde_key);
+	    #if defined(_KERNEL)
+	    printk("[%s] new hash %x \n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2]);
+    	    #endif
 
-    	dde->dde_type = DDT_TYPES;	/* will be DDT_TYPES if no entry found */
-    	dde->dde_class = DDT_CLASSES;	/* will be DDT_CLASSES if no entry found */
-    	dde->dde_loaded = B_TRUE;
-    	dde->dde_loading = B_FALSE;
-    	ddt_stat_update(ddt, dde, -1ULL); /*Safe. No other thread will have access */
+    	    dde->dde_type = DDT_TYPES;	/* will be DDT_TYPES if no entry found */
+    	    dde->dde_class = DDT_CLASSES;	/* will be DDT_CLASSES if no entry found */
+    	    dde->dde_loaded = B_TRUE;
+    	    dde->dde_loading = B_FALSE;
+            dde->next = NULL;
 
-    	return dde;
+	    avl_insert(&ddt->ddt_tree, dde, where); /* DP: TODO Remove this */
+    	    hash_table_insert(dde);
+
+            /* VINAY: I guess this is not needed since there is no stats to 
+               update on disk */
+    	    //ddt_stat_update(ddt, dde, -1ULL); /*Safe. No other thread will have access */
+
+            #if defined(_KERNEL)
+                printk("[ddt_lookup] Returning from ddt_lookup....\n");
+            #endif
+
+    	    return dde;
 
     } else {
     	/* LOOK UP THE DISK*/
@@ -866,10 +876,11 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 		  We need to look up the hash table to find the hash
 		   if not then alloc it*/
 		#if defined(_KERNEL)
-		printk("[%s] Key %x not found in Bloom\n", __FUNCTION__, dde_search.dde_key.ddk_cksum.zc_word[2]);
+		printk("[%s] Key %x found in Bloom\n", 
+                    __FUNCTION__, dde_search.dde_key.ddk_cksum.zc_word[2]);
 		#endif
 		dde = hash_table_fetch(&dde_search);
-			
+	        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 		if (dde == NULL) {
 			dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 			ASSERT(dde == NULL); /*We shouldnt find it in AVL either */
@@ -880,12 +891,27 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 			#endif
 			hash_table_insert(dde);
 		}
-		while (dde->dde_loading)
+                 #if defined(_KERNEL)
+                     printk("[ddt_lookup]Before cv_wait...\n");
+                 #endif
+
+		while (dde->dde_loading) {
+                        #if defined(_KERNEL)
+                         printk("[ddt_lookup]Waiting for dde loading...\n");
+                        #endif
 			cv_wait(&dde->dde_cv, &ddt->ddt_lock);
+                }
+
+                 #if defined(_KERNEL)
+                     printk("[ddt_lookup]After cv_wait...\n");
+                 #endif
 
 		if (dde->dde_loaded)
 			return (dde);
 
+                #if defined(_KERNEL)
+                     printk("[ddt_lookup] Setting sse_loading...\n");
+                 #endif
 		dde->dde_loading = B_TRUE;
 		ddt_exit(ddt);
 		error = ENOENT;
@@ -1439,9 +1465,7 @@ hash_table_insert(ddt_entry_t *dde)
         start = ddt_hash[slot];
         ddt_hash[slot] = dde; /*make this the head */
 
-        if (start != NULL) {
-        	dde->next = start; /*link it to previous start */
-        }
+       	dde->next = start; /*link it to previous start */
 	#if defined(_KERNEL)
 	printk("[%s] inserted hash %x at slot %d\n",__FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot); 
 	#endif
@@ -1453,35 +1477,35 @@ hash_table_fetch(ddt_entry_t *dde)
 	
         uint32_t slot, found=0;
         ddt_entry_t *start = NULL; 
-	ddt_entry_t *ret = NULL;
 
         slot = GET_HASH_SLOT(dde->dde_key.ddk_cksum.zc_word);
         start = ddt_hash[slot];
       	
 
         while(start != NULL) {
-        	if (is_equal(dde, start)) {
+        	//if (is_equal(dde, start)) {
+        	if (ddt_entry_compare(dde, start) == 0) {
         		found = 1;
-			ret = dde;
 			#if defined(_KERNEL)
 			printk("[%s] found hash %x at slot %d\n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot);
 			#endif
-			return ret;
+			return start;
         	}
         	start = start->next;
         }
 	#if defined(_KERNEL)
 	printk("[%s] no hash %x at slot %d\n", __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot);
 	#endif
-	return ret;
+	return NULL;
 }
 
 static void hash_table_free(void)
 {
         int i;
-        ddt_entry_t *temp, *curr;
+        //ddt_entry_t *temp, *curr;
 	/* For each bucket free each chain of hashes */
         for(i = 0; i < NUM_BUCKETS; i++) {
+#if 0
                if(ddt_hash[i] != NULL) {
 			/*
                        ddt_free_new(ddt_hash[i]);
@@ -1497,6 +1521,7 @@ static void hash_table_free(void)
 			}
 			 
                }
+#endif
 	       ddt_hash[i] = NULL;
         }
 	return;
