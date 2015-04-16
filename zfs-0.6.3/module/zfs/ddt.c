@@ -57,18 +57,16 @@
 
 /* Hashtable: Each entry is a list of hashes hashed using GET_HASH_SLOT*/
 ddt_entry_t *ddt_hash[NUM_BUCKETS];
-
+static uint64_t numentries;
 
 static void hash_table_insert(ddt_entry_t *dde);
 static ddt_entry_t* hash_table_fetch(ddt_entry_t *dde);
 static void hash_table_free(void);
+static void hash_table_remove(ddt_entry_t *dde);
+static ddt_entry_t* hash_destroy_node(int *slot);
 static inline boolean_t is_equal(ddt_entry_t *dde1, ddt_entry_t *dde2);
 
-//static ddt_entry_t *ddt_alloc_new(const ddt_key_t *ddk);
-//static void ddt_free_new(ddt_entry_new_t *dde);
 static inline uint64_t RDTSC(void);
-
-//static kmem_cache_t *ddt_entry_new_cache;
 /****************************************************************************/
 
 static kmem_cache_t *ddt_cache;
@@ -756,6 +754,7 @@ ddt_remove(ddt_t *ddt, ddt_entry_t *dde)
         printk("[ddt.c: ddt_remove] trying to remove dde...\n");
 #endif
 	//avl_remove(&ddt->ddt_tree, dde);
+        hash_table_remove(dde);
 	ddt_free(dde);
 }
 
@@ -825,16 +824,14 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	ddt_entry_t *dde = NULL, dde_search;
 	enum ddt_type type;
 	enum ddt_class class;
-	avl_index_t where;
+	//avl_index_t where;
 	int error;
-   	uint64_t prior = 0, after = 0;
-
+   	//uint64_t prior = 0, after = 0;
 
 	ASSERT(MUTEX_HELD(&ddt->ddt_lock));
 
 	ddt_key_fill(&dde_search.dde_key, bp);
 
-    
         int found = ddt_check_bloom(ddt, &dde_search, add);
     	
         if (!found) {
@@ -844,7 +841,7 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
     	                return NULL;
  		
     	        /* DP: Fuck we have to still do a lookup before we insert */
-    	        dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+    	        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 
        	        dde = ddt_alloc(&dde_search.dde_key);
 #if defined(_KERNEL)
@@ -861,8 +858,9 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
                 dde->next = NULL;
 
                 /* DP: TODO Remove this */
-	        avl_insert(&ddt->ddt_tree, dde, where);
+	        //avl_insert(&ddt->ddt_tree, dde, where);
     	        hash_table_insert(dde);
+		ddt_stat_update(ddt, dde, -1ULL);
 
     	        return dde;
 
@@ -873,10 +871,10 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 		dde = hash_table_fetch(&dde_search);
 	        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
 		if (dde == NULL) {
-		        dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-			ASSERT(dde == NULL);
+		        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
+			//ASSERT(dde == NULL);
 			dde = ddt_alloc(&dde_search.dde_key);
-			avl_insert(&ddt->ddt_tree, dde, where);
+			//avl_insert(&ddt->ddt_tree, dde, where);
 			hash_table_insert(dde);
 		}
 
@@ -920,8 +918,8 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 		//after = RDTSC();
 #if defined(_KERNEL)
 #if DEBUG
-		printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
-		    (after - prior));
+		//printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
+		//    (after - prior));
 #endif
 #endif
 
@@ -1001,13 +999,14 @@ ddt_table_alloc(spa_t *spa, enum zio_checksum c)
 static void
 ddt_table_free(ddt_t *ddt)
 {
-	ASSERT(avl_numnodes(&ddt->ddt_tree) == 0);
-	ASSERT(avl_numnodes(&ddt->ddt_repair_tree) == 0);
+	//ASSERT(avl_numnodes(&ddt->ddt_tree) == 0);
+	//ASSERT(avl_numnodes(&ddt->ddt_repair_tree) == 0);
+        ASSERT(numentries == 0);
 	avl_destroy(&ddt->ddt_tree);
 	avl_destroy(&ddt->ddt_repair_tree);
+        hash_table_free();
 	mutex_destroy(&ddt->ddt_lock);
 	kmem_cache_free(ddt_cache, ddt);
-
 }
 
 void
@@ -1089,7 +1088,7 @@ void
 ddt_unload(spa_t *spa)
 {
 	enum zio_checksum c;
-
+        numentries = 0;
         /* VINAY: The cause of pain. For some reason I cannot understand, 
            ddt_unload is called from spa_unload while bootstarpping a pool!
            This was effectively causing a kernel panic on null pointer 
@@ -1155,9 +1154,7 @@ ddt_entry_t *
 ddt_repair_start(ddt_t *ddt, const blkptr_t *bp)
 {
 #if defined(_KERNEL)
-#if DEBUG
         printk("ZFS: ddt.c: ddt_repair_start: Starting ddt_repair_start\n");
-#endif
 #endif
 	ddt_key_t ddk;
 	ddt_entry_t *dde;
@@ -1189,6 +1186,9 @@ ddt_repair_start(ddt_t *ddt, const blkptr_t *bp)
 void
 ddt_repair_done(ddt_t *ddt, ddt_entry_t *dde)
 {
+#if defined (_KERNEL)
+        printk("[ddt.c: ddt_repair_done]...\n");
+#endif
 	avl_index_t where;
 
 	ddt_enter(ddt);
@@ -1257,6 +1257,9 @@ ddt_repair_table(ddt_t *ddt, zio_t *rio)
 
 	ddt_enter(ddt);
 	for (rdde = avl_first(t); rdde != NULL; rdde = rdde_next) {
+#if defined(_KERNEL)
+        printk("[ddt.c: ddt_repair_table] Repairing a dde..\n");
+#endif
 		rdde_next = AVL_NEXT(t, rdde);
 		avl_remove(&ddt->ddt_repair_tree, rdde);
 		ddt_exit(ddt);
@@ -1341,12 +1344,18 @@ ddt_sync_table(ddt_t *ddt, dmu_tx_t *tx, uint64_t txg)
 {
 	spa_t *spa = ddt->ddt_spa;
 	ddt_entry_t *dde;
-	void *cookie = NULL;
+	//void *cookie = NULL;
 	enum ddt_type type;
 	enum ddt_class class;
+        int slot = 0;
 
-	if (avl_numnodes(&ddt->ddt_tree) == 0)
-		return;
+        /* VINAY: Get rid of avl tree calls, 
+           see if this optimization can be introduced later */
+	//if (avl_numnodes(&ddt->ddt_tree) == 0)
+	//	return;
+
+        if(numentries == 0)
+                return;
 
 	ASSERT(spa->spa_uberblock.ub_version >= SPA_VERSION_DEDUP);
 
@@ -1354,9 +1363,11 @@ ddt_sync_table(ddt_t *ddt, dmu_tx_t *tx, uint64_t txg)
 		spa->spa_ddt_stat_object = zap_create_link(ddt->ddt_os,
 		    DMU_OT_DDT_STATS, DMU_POOL_DIRECTORY_OBJECT,
 		    DMU_POOL_DDT_STATS, tx);
-	}
+        }
 
-	while ((dde = avl_destroy_nodes(&ddt->ddt_tree, &cookie)) != NULL) {
+        /* VINAY: Replace with hash table calls */
+	//while ((dde = avl_destroy_nodes(&ddt->ddt_tree, &cookie)) != NULL) {
+	while ((dde = hash_destroy_node(&slot)) != NULL) {
 		ddt_sync_entry(ddt, dde, tx, txg);
 		ddt_free(dde);
 	}
@@ -1444,7 +1455,6 @@ ddt_walk(spa_t *spa, ddt_bookmark_t *ddb, ddt_entry_t *dde)
 static void
 hash_table_insert(ddt_entry_t *dde)
 {
-
         uint32_t slot;
         ddt_entry_t* start = NULL;
 
@@ -1459,6 +1469,49 @@ hash_table_insert(ddt_entry_t *dde)
            __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2], slot); 
 #endif
 #endif
+        numentries++;
+        return;
+}
+
+static void
+hash_table_remove(ddt_entry_t *dde)
+{
+#if defined (_KERNEL)
+        printk("[ddt.c: hash_table_remove]...\n");
+#endif
+        uint32_t slot;
+        ddt_entry_t  *cur = NULL, *next = NULL;
+
+        slot = GET_HASH_SLOT(dde->dde_key.ddk_cksum.zc_word);
+        if(ddt_hash[slot] == NULL)
+                return;
+           
+        cur = ddt_hash[slot];
+        if(ddt_entry_compare(dde, cur) == 0) {
+                ddt_hash[slot] = cur->next;
+                ASSERT(numentries > 0);
+                numentries--;
+                return;
+        }
+
+        next = cur->next;
+
+        while(next != NULL) {
+                if(ddt_entry_compare(dde, next) == 0) {
+                        ASSERT(numentries > 0);
+                        cur->next = next->next;
+                        numentries--;
+                        return;
+                }
+                cur = next;
+                next = next->next;
+        }
+
+#if defined (_KERNEL)
+        printk("[ddt.c: hash_table_remove] dde not found in hash table\n"); 
+#endif
+
+        return;
 }
 
 static ddt_entry_t*
@@ -1493,11 +1546,34 @@ hash_table_fetch(ddt_entry_t *dde)
 	return NULL;
 }
 
+static ddt_entry_t *
+hash_destroy_node(int *slot)
+{
+        ddt_entry_t *dde = NULL;
+#if defined(_KERNEL)
+#if DEBUG
+        printk("[ddt.c: hash_destroy_node] slot = %d, numentries = %u\n", *slot, numentries);
+#endif
+#endif
+        for(; (*slot) < NUM_BUCKETS; (*slot)++) {
+                if(ddt_hash[*(slot)] != NULL) {
+                        dde = ddt_hash[*(slot)];
+                        ddt_hash[*(slot)] = dde->next;
+                        ASSERT(numentries > 0);       
+                        numentries--;
+                        return dde;
+                }
+        }
+
+        return NULL; 
+}
+
 static void hash_table_free(void)
 {
         int i;
         //ddt_entry_t *temp, *curr;
 	/* For each bucket free each chain of hashes */
+        numentries = 0;
         for(i = 0; i < NUM_BUCKETS; i++) {
 #if 0
                if(ddt_hash[i] != NULL) {
