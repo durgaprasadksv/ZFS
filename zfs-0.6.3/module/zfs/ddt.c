@@ -56,8 +56,8 @@
         ((sha256[2]) & (NUM_BUCKETS -1))
 
 /* Hashtable: Each entry is a list of hashes hashed using GET_HASH_SLOT*/
-ddt_entry_t *ddt_hash[NUM_BUCKETS];
-static uint64_t numentries;
+static ddt_entry_t *ddt_hash[NUM_BUCKETS];
+static uint64_t    numentries;
 
 static void hash_table_insert(ddt_entry_t *dde);
 static ddt_entry_t* hash_table_fetch(ddt_entry_t *dde);
@@ -76,7 +76,7 @@ static ddt_bloom_t  *ddt_bloom = NULL;
 /*
  * Enable/disable prefetching of dedup-ed blocks which are going to be freed.
  */
-int zfs_dedup_prefetch = 1;
+int zfs_dedup_prefetch = 0;
 
 static const ddt_ops_t *ddt_ops[DDT_TYPES] = {
 	&ddt_zap_ops,
@@ -701,9 +701,6 @@ ddt_init(void)
 	    sizeof (ddt_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
 	ddt_entry_cache = kmem_cache_create("ddt_entry_cache",
 	    sizeof (ddt_entry_t), 0, NULL, NULL, NULL, NULL, NULL, 0);
-	/*
-    ddt_entry_new_cache = kmem_cache_create("ddt_entry_new_cache",
-        sizeof (ddt_entry_new_t), 0, NULL, NULL, NULL, NULL, NULL, 0); */
 }
 
 void
@@ -723,7 +720,7 @@ ddt_alloc(const ddt_key_t *ddk)
 	cv_init(&dde->dde_cv, NULL, CV_DEFAULT, NULL);
 
 	dde->dde_key = *ddk;
-
+        //memcpy(&dde->dde_key, ddk, sizeof(ddt_key_t));
 	return (dde);
 }
 
@@ -753,7 +750,6 @@ ddt_remove(ddt_t *ddt, ddt_entry_t *dde)
 #if defined(_KERNEL)
         printk("[ddt.c: ddt_remove] trying to remove dde...\n");
 #endif
-	//avl_remove(&ddt->ddt_tree, dde);
         hash_table_remove(dde);
 	ddt_free(dde);
 }
@@ -824,7 +820,6 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	ddt_entry_t *dde = NULL, dde_search;
 	enum ddt_type type;
 	enum ddt_class class;
-	//avl_index_t where;
 	int error;
    	//uint64_t prior = 0, after = 0;
 
@@ -833,16 +828,10 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
 	ddt_key_fill(&dde_search.dde_key, bp);
 
         int found = ddt_check_bloom(ddt, &dde_search, add);
-    	
-        if (!found) {
-    	        /* DP: We done need to do any lookups here. 
-                Insert in AVL and HashTable */
+        if(!found) {
     	        if (!add) 
     	                return NULL;
  		
-    	        /* DP: Fuck we have to still do a lookup before we insert */
-    	        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-
        	        dde = ddt_alloc(&dde_search.dde_key);
 #if defined(_KERNEL)
 #if DEBUG
@@ -850,84 +839,74 @@ ddt_lookup(ddt_t *ddt, const blkptr_t *bp, boolean_t add)
                     __FUNCTION__, dde->dde_key.ddk_cksum.zc_word[2]);
 #endif
 #endif
-
     	        dde->dde_type = DDT_TYPES;	
     	        dde->dde_class = DDT_CLASSES;
     	        dde->dde_loaded = B_TRUE;
     	        dde->dde_loading = B_FALSE;
                 dde->next = NULL;
-
-                /* DP: TODO Remove this */
-	        //avl_insert(&ddt->ddt_tree, dde, where);
     	        hash_table_insert(dde);
-		ddt_stat_update(ddt, dde, -1ULL);
 
     	        return dde;
+        } 
 
-        } else {
-		/* DP: dde will be null here for an old hash: 
-	    	   We need to look up the hash table to find the hash
-		   if not then alloc it*/
-		dde = hash_table_fetch(&dde_search);
-	        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-		if (dde == NULL) {
-		        //dde = avl_find(&ddt->ddt_tree, &dde_search, &where);
-			//ASSERT(dde == NULL);
-			dde = ddt_alloc(&dde_search.dde_key);
-			//avl_insert(&ddt->ddt_tree, dde, where);
-			hash_table_insert(dde);
-		}
+	dde = hash_table_fetch(&dde_search);
+	if (dde == NULL) {
+                if(!add)
+                        return NULL;
+		dde = ddt_alloc(&dde_search.dde_key);
+		hash_table_insert(dde);
+	}
 
-		while (dde->dde_loading) {
-			cv_wait(&dde->dde_cv, &ddt->ddt_lock);
-                }
+	while (dde->dde_loading)
+		cv_wait(&dde->dde_cv, &ddt->ddt_lock);
 
-		if (dde->dde_loaded)
-			return (dde);
+	if (dde->dde_loaded)
+		return (dde);
 
-		dde->dde_loading = B_TRUE;
-		ddt_exit(ddt);
-		error = ENOENT;
-		    
-		//prior = RDTSC();
-		for (type = 0; type < DDT_TYPES; type++) {
-			for (class = 0; class < DDT_CLASSES; class++) {
-				error = 
-                                    ddt_object_lookup(ddt, type, class, dde);
-				if (error != ENOENT)
-					break;
-			}
+	dde->dde_loading = B_TRUE;
+	ddt_exit(ddt);
+	error = ENOENT;
+	    
+	//prior = RDTSC();
+	for (type = 0; type < DDT_TYPES; type++) {
+		for (class = 0; class < DDT_CLASSES; class++) {
+			error = ddt_object_lookup(ddt, type, class, dde);
 			if (error != ENOENT)
 				break;
 		}
+		if (error != ENOENT)
+			break;
+	}
 
-		ASSERT(error == 0 || error == ENOENT);
+	ASSERT(error == 0 || error == ENOENT);
 
-		ddt_enter(ddt);
-		ASSERT(dde->dde_loaded == B_FALSE);
-		ASSERT(dde->dde_loading == B_TRUE);
+	ddt_enter(ddt);
+	ASSERT(dde->dde_loaded == B_FALSE);
+	ASSERT(dde->dde_loading == B_TRUE);
 
-		dde->dde_type = type;	/* will be DDT_TYPES if no entry found */
-		dde->dde_class = class;	/* will be DDT_CLASSES if no entry found */
-		dde->dde_loaded = B_TRUE;
-		dde->dde_loading = B_FALSE;
+	dde->dde_type    = type;   /* will be DDT_TYPES if no entry found */
+	dde->dde_class   = class;  /* will be DDT_CLASSES if no entry found */
+	dde->dde_loaded  = B_TRUE;
+	dde->dde_loading = B_FALSE;
 
-		if (error == 0)
-			ddt_stat_update(ddt, dde, -1ULL);
-
-		//after = RDTSC();
+	if (error == 0) {
+#if defined(_KERNEL)
+	        printk("[ddt.c: ddt_lookup] Found in zap\n");
+#endif
+		ddt_stat_update(ddt, dde, -1ULL);
+        }
+	//after = RDTSC();
 #if defined(_KERNEL)
 #if DEBUG
-		//printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
-		//    (after - prior));
+	//printk("ZFS: ddt.c: ddt_lookup: Time spent in zap lookup: %llu\n", 
+	//    (after - prior));
 #endif
 #endif
 
-		cv_broadcast(&dde->dde_cv);
+	cv_broadcast(&dde->dde_cv);
 
-		/* Store the new DDT in the HashTable. We might need it again */
-		return (dde);
-        }
+	/* Store the new DDT in the HashTable. We might need it again */
+	return (dde);
 }
 
 void
@@ -984,10 +963,7 @@ ddt_table_alloc(spa_t *spa, enum zio_checksum c)
 	bzero(ddt, sizeof (ddt_t));
 
 	mutex_init(&ddt->ddt_lock, NULL, MUTEX_DEFAULT, NULL);
-	avl_create(&ddt->ddt_tree, ddt_entry_compare,
-	    sizeof (ddt_entry_t), offsetof(ddt_entry_t, dde_node));
-	avl_create(&ddt->ddt_repair_tree, ddt_entry_compare,
-	    sizeof (ddt_entry_t), offsetof(ddt_entry_t, dde_node));
+
 	ddt->ddt_checksum = c;
 	ddt->ddt_spa = spa;
 	ddt->ddt_os = spa->spa_meta_objset;
@@ -999,11 +975,7 @@ ddt_table_alloc(spa_t *spa, enum zio_checksum c)
 static void
 ddt_table_free(ddt_t *ddt)
 {
-	//ASSERT(avl_numnodes(&ddt->ddt_tree) == 0);
-	//ASSERT(avl_numnodes(&ddt->ddt_repair_tree) == 0);
         ASSERT(numentries == 0);
-	avl_destroy(&ddt->ddt_tree);
-	avl_destroy(&ddt->ddt_repair_tree);
         hash_table_free();
 	mutex_destroy(&ddt->ddt_lock);
 	kmem_cache_free(ddt_cache, ddt);
@@ -1026,9 +998,7 @@ ddt_create(spa_t *spa)
                         bzero(ddt_bloom->bf, ddt_bloom->size);
                 else {
 #if defined(_KERNEL)
-#if DEBUG
                         printk("ZFS: ddt.c: ddt_create: Failed to alloc bf\n");
-#endif 
 #endif
                         kmem_free(ddt_bloom, sizeof(ddt_bloom_t));
                         ddt_bloom = NULL;         
@@ -1036,9 +1006,7 @@ ddt_create(spa_t *spa)
         }
         else {
 #if defined(_KERNEL)
-#if DEBUG
                 printk("ZFS: ddt.c: ddt_create: Failed to alloc ddt_bloom\n");
-#endif
 #endif
         }
 
@@ -1093,18 +1061,7 @@ ddt_unload(spa_t *spa)
            ddt_unload is called from spa_unload while bootstarpping a pool!
            This was effectively causing a kernel panic on null pointer 
            access */
-#if defined(_KERNEL)
-#if DEBUG
-        printk("ZFS: ddt.c: In ddt_unload\n");
-#endif
-#endif
-
         if(ddt_bloom != NULL) {
-#if defined(_KERNEL)
-#if DEBUG
-                printk("ZFS: ddt.c: Freeing the bloom filter\n");
-#endif
-#endif
                 vmem_free(ddt_bloom->bf, ddt_bloom->size);
                 kmem_free(ddt_bloom, sizeof(ddt_bloom_t));
                 ddt_bloom = NULL;
@@ -1189,6 +1146,7 @@ ddt_repair_done(ddt_t *ddt, ddt_entry_t *dde)
 #if defined (_KERNEL)
         printk("[ddt.c: ddt_repair_done]...\n");
 #endif
+#if 0
 	avl_index_t where;
 
 	ddt_enter(ddt);
@@ -1200,6 +1158,7 @@ ddt_repair_done(ddt_t *ddt, ddt_entry_t *dde)
 		ddt_free(dde);
 
 	ddt_exit(ddt);
+#endif
 }
 
 static void
@@ -1249,12 +1208,13 @@ ddt_repair_table(ddt_t *ddt, zio_t *rio)
 {
 	spa_t *spa = ddt->ddt_spa;
 	ddt_entry_t *dde, *rdde_next, *rdde;
-	avl_tree_t *t = &ddt->ddt_repair_tree;
+	//avl_tree_t *t = &ddt->ddt_repair_tree;
 	blkptr_t blk;
 
 	if (spa_sync_pass(spa) > 1)
 		return;
 
+#if 0
 	ddt_enter(ddt);
 	for (rdde = avl_first(t); rdde != NULL; rdde = rdde_next) {
 #if defined(_KERNEL)
@@ -1270,6 +1230,7 @@ ddt_repair_table(ddt_t *ddt, zio_t *rio)
 		ddt_enter(ddt);
 	}
 	ddt_exit(ddt);
+#endif
 }
 
 static void
@@ -1284,6 +1245,7 @@ ddt_sync_entry(ddt_t *ddt, ddt_entry_t *dde, dmu_tx_t *tx, uint64_t txg)
 	enum ddt_class nclass;
 	uint64_t total_refcnt = 0;
 	int p;
+        int objup;
 
 	ASSERT(dde->dde_loaded);
 	ASSERT(!dde->dde_loading);
@@ -1304,12 +1266,21 @@ ddt_sync_entry(ddt_t *ddt, ddt_entry_t *dde, dmu_tx_t *tx, uint64_t txg)
 		total_refcnt += ddp->ddp_refcnt;
 	}
 
-	if (dde->dde_phys[DDT_PHYS_DITTO].ddp_phys_birth != 0)
+	if (dde->dde_phys[DDT_PHYS_DITTO].ddp_phys_birth != 0) {
+#if defined (_KERNEL)
+                printk("[ddt.c: ddt_sync_entry] CASE1\n");
+#endif
 		nclass = DDT_CLASS_DITTO;
-	else if (total_refcnt > 1)
+        }
+	else if (total_refcnt > 1) {
+#if defined (_KERNEL)
+                printk("[ddt.c: ddt_sync_entry] CASE2\n");
+#endif
 		nclass = DDT_CLASS_DUPLICATE;
-	else
+        }
+	else {
 		nclass = DDT_CLASS_UNIQUE;
+        }
 
 	if (otype != DDT_TYPES &&
 	    (otype != ntype || oclass != nclass || total_refcnt == 0)) {
@@ -1323,7 +1294,12 @@ ddt_sync_entry(ddt_t *ddt, ddt_entry_t *dde, dmu_tx_t *tx, uint64_t txg)
 		ddt_stat_update(ddt, dde, 0);
 		if (!ddt_object_exists(ddt, ntype, nclass))
 			ddt_object_create(ddt, ntype, nclass, tx);
-		VERIFY(ddt_object_update(ddt, ntype, nclass, dde, tx) == 0);
+		objup = ddt_object_update(ddt, ntype, nclass, dde, tx);
+                if(objup != 0) {
+#if defined (_KERNEL)
+                        printk("[ddt.c: ddt_sync_entry] Error while ddt_object_update = %d\n", objup);
+#endif
+                }
 
 		/*
 		 * If the class changes, the order that we scan this bp
@@ -1343,17 +1319,12 @@ static void
 ddt_sync_table(ddt_t *ddt, dmu_tx_t *tx, uint64_t txg)
 {
 	spa_t *spa = ddt->ddt_spa;
-	ddt_entry_t *dde;
+	ddt_entry_t *dde, *start, *temp;
 	//void *cookie = NULL;
 	enum ddt_type type;
 	enum ddt_class class;
         int slot = 0;
-
-        /* VINAY: Get rid of avl tree calls, 
-           see if this optimization can be introduced later */
-	//if (avl_numnodes(&ddt->ddt_tree) == 0)
-	//	return;
-
+        
         if(numentries == 0)
                 return;
 
@@ -1365,12 +1336,27 @@ ddt_sync_table(ddt_t *ddt, dmu_tx_t *tx, uint64_t txg)
 		    DMU_POOL_DDT_STATS, tx);
         }
 
-        /* VINAY: Replace with hash table calls */
-	//while ((dde = avl_destroy_nodes(&ddt->ddt_tree, &cookie)) != NULL) {
 	while ((dde = hash_destroy_node(&slot)) != NULL) {
 		ddt_sync_entry(ddt, dde, tx, txg);
 		ddt_free(dde);
 	}
+
+#if 0
+        for(slot = 0; slot < NUM_BUCKETS; slot++) {
+                if(ddt_hash[slot] == NULL)
+                    continue;
+
+                start = ddt_hash[slot];
+                while(start) {
+                        ddt_sync_entry(ddt, start, tx, txg);
+                        temp = start;
+                        start = start->next;
+                        ddt_free(temp);
+                        numentries--;
+                }
+                ddt_hash[slot] = NULL;
+        }
+#endif
 
 	for (type = 0; type < DDT_TYPES; type++) {
 		uint64_t add, count = 0;
@@ -1382,6 +1368,12 @@ ddt_sync_table(ddt_t *ddt, dmu_tx_t *tx, uint64_t txg)
 				count += add;
 			}
 		}
+
+#if defined (_KERNEL)
+               printk("[ddt.c: ddt_sync_table] Total obj sync count = %llu for class = %d and type = %d\n",
+                   count, (int)class, (int)type);
+#endif
+
 		for (class = 0; class < DDT_CLASSES; class++) {
 			if (count == 0 && ddt_object_exists(ddt, type, class))
 				ddt_object_destroy(ddt, type, class, tx);
@@ -1415,7 +1407,7 @@ ddt_sync(spa_t *spa, uint64_t txg)
 	(void) zio_wait(rio);
 
         /* VINAY: Free up the hash table */
-        hash_table_free();
+        //hash_table_free();
 
 	dmu_tx_commit(tx);
 }
@@ -1476,15 +1468,16 @@ hash_table_insert(ddt_entry_t *dde)
 static void
 hash_table_remove(ddt_entry_t *dde)
 {
+        uint32_t slot;
+        ddt_entry_t  *cur = NULL, *next = NULL;
 #if defined (_KERNEL)
         printk("[ddt.c: hash_table_remove]...\n");
 #endif
-        uint32_t slot;
-        ddt_entry_t  *cur = NULL, *next = NULL;
 
         slot = GET_HASH_SLOT(dde->dde_key.ddk_cksum.zc_word);
-        if(ddt_hash[slot] == NULL)
+        if(ddt_hash[slot] == NULL) {
                 return;
+        }
            
         cur = ddt_hash[slot];
         if(ddt_entry_compare(dde, cur) == 0) {
@@ -1517,7 +1510,6 @@ hash_table_remove(ddt_entry_t *dde)
 static ddt_entry_t*
 hash_table_fetch(ddt_entry_t *dde)
 {
-	
         uint32_t slot;
         ddt_entry_t *start = NULL; 
 
@@ -1532,7 +1524,7 @@ hash_table_fetch(ddt_entry_t *dde)
 			printk("[%s] found hash %x at slot %d\n", __FUNCTION__,
                             dde->dde_key.ddk_cksum.zc_word[2], slot);
 #endif
-#endif
+#endif  
 			return start;
         	}
         	start = start->next;
@@ -1564,36 +1556,17 @@ hash_destroy_node(int *slot)
                         return dde;
                 }
         }
-
         return NULL; 
 }
 
 static void hash_table_free(void)
 {
         int i;
-        //ddt_entry_t *temp, *curr;
-	/* For each bucket free each chain of hashes */
         numentries = 0;
         for(i = 0; i < NUM_BUCKETS; i++) {
-#if 0
-               if(ddt_hash[i] != NULL) {
-			/*
-                       ddt_free_new(ddt_hash[i]);
-                       ddt_hash[i] = NULL;
-			*/
-			temp = ddt_hash[i];
-			while(temp != NULL) {
-				curr = temp;
-				temp = temp->next;
-				if (curr != NULL) {
-					ddt_free(curr);
-				}
-			}
-			 
-               }
-#endif
 	       ddt_hash[i] = NULL;
         }
+
 	return;
 }
 
@@ -1609,26 +1582,6 @@ is_equal(ddt_entry_t *dde1, ddt_entry_t *dde2)
 
         return 1;
 }
-/*
-static ddt_entry_new_t *
-ddt_alloc_new(const ddt_key_t *ddk)
-{
-	ddt_entry_new_t *dde;
-
-	dde = kmem_cache_alloc(ddt_entry_new_cache, KM_PUSHPAGE);
-	bzero(dde, sizeof (ddt_entry_new_t));
-
-	dde->dde_key = *ddk;
-	dde->next = NULL;
-	return (dde);
-}
-
-static void
-ddt_free_new(ddt_entry_new_t *dde)
-{
-	kmem_cache_free(ddt_entry_new_cache, dde);
-}
-*/
 
 /* assembly code to read the TSC */
 static inline uint64_t 
