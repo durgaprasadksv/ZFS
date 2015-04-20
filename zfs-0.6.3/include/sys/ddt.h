@@ -114,9 +114,24 @@ struct ddt_entry {
 	uint8_t		dde_loading;
 	uint8_t		dde_loaded;
 	kcondvar_t	dde_cv;
+	avl_node_t	dde_node; /* DP: TODO Remove this */
 	struct ddt_entry *next;
-	//avl_node_t	dde_node; /* DP: TODO Remove this */
 };
+
+
+
+typedef struct ddt_entry_new {
+	ddt_key_t	dde_key;
+	ddt_phys_t	dde_phys[DDT_PHYS_TYPES];
+	zio_t		*dde_lead_zio[DDT_PHYS_TYPES];
+	void		*dde_repair_data;
+    struct ddt_entry_new_t *next;
+	enum ddt_type	dde_type;
+	enum ddt_class	dde_class;
+	uint8_t		dde_loading;
+	uint8_t		dde_loaded;
+	kcondvar_t	dde_cv;
+} ddt_entry_new_t;
 
 /* VINAY: Bloom filter type */
 typedef struct ddt_bloom {
@@ -131,8 +146,8 @@ typedef struct ddt_bloom {
  */
 struct ddt {
 	kmutex_t	ddt_lock;
-	//avl_tree_t	ddt_tree;
-	//avl_tree_t	ddt_repair_tree;
+	avl_tree_t	ddt_tree;
+	avl_tree_t	ddt_repair_tree;
 	enum zio_checksum ddt_checksum;
 	spa_t		*ddt_spa;
 	objset_t	*ddt_os;
@@ -143,6 +158,7 @@ struct ddt {
 	ddt_object_t	ddt_object_stats[DDT_TYPES][DDT_CLASSES];
 	avl_node_t	ddt_node;
         ddt_bloom_t     *ddt_bloom; /* VINAY: Bloom filter for this ddt */
+	int count;
 };
 
 /*
