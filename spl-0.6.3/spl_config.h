@@ -14,7 +14,7 @@
 #define DEBUG_LOG 1
 
 /* new shrinker callback wants 2 args */
-/* #undef HAVE_2ARGS_NEW_SHRINKER_CALLBACK */
+#define HAVE_2ARGS_NEW_SHRINKER_CALLBACK 1
 
 /* old shrinker callback wants 2 args */
 /* #undef HAVE_2ARGS_OLD_SHRINKER_CALLBACK */
@@ -26,10 +26,10 @@
 #define HAVE_2ARGS_VFS_FSYNC 1
 
 /* vfs_getattr wants 2 args */
-#define HAVE_2ARGS_VFS_GETATTR 1
+/* #undef HAVE_2ARGS_VFS_GETATTR */
 
 /* vfs_unlink() wants 2 args */
-/* #undef HAVE_2ARGS_VFS_UNLINK */
+#define HAVE_2ARGS_VFS_UNLINK 1
 
 /* zlib_deflate_workspacesize() wants 2 args */
 #define HAVE_2ARGS_ZLIB_DEFLATE_WORKSPACESIZE 1
@@ -41,10 +41,10 @@
 /* #undef HAVE_3ARGS_SHRINKER_CALLBACK */
 
 /* vfs_unlink() wants 3 args */
-#define HAVE_3ARGS_VFS_UNLINK 1
+/* #undef HAVE_3ARGS_VFS_UNLINK */
 
 /* vfs_rename() wants 4 args */
-/* #undef HAVE_4ARGS_VFS_RENAME */
+#define HAVE_4ARGS_VFS_RENAME 1
 
 /* device_create wants 5 args */
 #define HAVE_5ARGS_DEVICE_CREATE 1
@@ -53,7 +53,7 @@
 #define HAVE_5ARGS_PROC_HANDLER 1
 
 /* vfs_rename() wants 5 args */
-#define HAVE_5ARGS_VFS_RENAME 1
+/* #undef HAVE_5ARGS_VFS_RENAME */
 
 /* vfs_rename() wants 6 args */
 /* #undef HAVE_6ARGS_VFS_RENAME */
@@ -119,7 +119,7 @@
 #define HAVE_INODE_I_MUTEX 1
 
 /* truncate_range() inode operation is available */
-/* #undef HAVE_INODE_TRUNCATE_RANGE */
+#define HAVE_INODE_TRUNCATE_RANGE 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -128,10 +128,10 @@
 #define HAVE_KALLSYMS_LOOKUP_NAME 1
 
 /* kern_path_locked() is available */
-#define HAVE_KERN_PATH_LOCKED 1
+/* #undef HAVE_KERN_PATH_LOCKED */
 
 /* kern_path_parent() is available */
-/* #undef HAVE_KERN_PATH_PARENT_HEADER */
+#define HAVE_KERN_PATH_PARENT_HEADER 1
 
 /* kern_path_parent() is available */
 /* #undef HAVE_KERN_PATH_PARENT_SYMBOL */
@@ -146,7 +146,7 @@
 /* #undef HAVE_KMEM_CACHE_GFPFLAGS */
 
 /* kuid_t/kgid_t in use */
-#define HAVE_KUIDGID_T 1
+/* #undef HAVE_KUIDGID_T */
 
 /* kvasprintf() is available */
 #define HAVE_KVASPRINTF 1
@@ -176,7 +176,7 @@
 #define HAVE_PATH_IN_NAMEIDATA 1
 
 /* yes */
-#define HAVE_PDE_DATA 1
+/* #undef HAVE_PDE_DATA */
 
 /* pgdat helpers are available */
 #define HAVE_PGDAT_HELPERS 1
@@ -188,13 +188,13 @@
 #define HAVE_PUT_TASK_STRUCT 1
 
 /* linux/sched/rt.h exists */
-#define HAVE_SCHED_RT_HEADER 1
+/* #undef HAVE_SCHED_RT_HEADER */
 
 /* set_fs_pwd() is available */
 /* #undef HAVE_SET_FS_PWD */
 
 /* set_fs_pwd() needs const path * */
-#define HAVE_SET_FS_PWD_WITH_CONST 1
+/* #undef HAVE_SET_FS_PWD_WITH_CONST */
 
 /* set_normalized_timespec() is available as export */
 #define HAVE_SET_NORMALIZED_TIMESPEC_EXPORT 1
@@ -212,7 +212,7 @@
 /* #undef HAVE_SHRINK_ICACHE_MEMORY */
 
 /* ->count_objects exists */
-#define HAVE_SPLIT_SHRINKER_CALLBACK 1
+/* #undef HAVE_SPLIT_SHRINKER_CALLBACK */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -257,7 +257,7 @@
 #define HAVE_VFS_FSYNC 1
 
 /* yes */
-#define HAVE_VMALLOC_INFO 1
+/* #undef HAVE_VMALLOC_INFO */
 
 /* Page state NR_ACTIVE is available */
 /* #undef HAVE_ZONE_STAT_ITEM_NR_ACTIVE */

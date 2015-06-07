@@ -107,31 +107,16 @@ enum ddt_phys_type {
 struct ddt_entry {
 	ddt_key_t	dde_key;
 	ddt_phys_t	dde_phys[DDT_PHYS_TYPES];
+	kcondvar_t	dde_cv;
 	zio_t		*dde_lead_zio[DDT_PHYS_TYPES];
 	void		*dde_repair_data;
+	struct ddt_entry *next;
 	enum ddt_type	dde_type;
 	enum ddt_class	dde_class;
 	uint8_t		dde_loading;
 	uint8_t		dde_loaded;
-	kcondvar_t	dde_cv;
-	avl_node_t	dde_node; /* DP: TODO Remove this */
-	struct ddt_entry *next;
 };
 
-
-
-typedef struct ddt_entry_new {
-	ddt_key_t	dde_key;
-	ddt_phys_t	dde_phys[DDT_PHYS_TYPES];
-	zio_t		*dde_lead_zio[DDT_PHYS_TYPES];
-	void		*dde_repair_data;
-    struct ddt_entry_new_t *next;
-	enum ddt_type	dde_type;
-	enum ddt_class	dde_class;
-	uint8_t		dde_loading;
-	uint8_t		dde_loaded;
-	kcondvar_t	dde_cv;
-} ddt_entry_new_t;
 
 /* VINAY: Bloom filter type */
 typedef struct ddt_bloom {
@@ -139,6 +124,7 @@ typedef struct ddt_bloom {
         uint64_t        *bf;
         uint64_t        hits;
         uint64_t        misses;
+        uint64_t        falsepos;
 } ddt_bloom_t;
 
 /*
@@ -146,13 +132,13 @@ typedef struct ddt_bloom {
  */
 struct ddt {
 	kmutex_t	ddt_lock;
-	avl_tree_t	ddt_tree;
-	avl_tree_t	ddt_repair_tree;
 	enum zio_checksum ddt_checksum;
 	spa_t		*ddt_spa;
 	objset_t	*ddt_os;
 	uint64_t	ddt_stat_object;
 	uint64_t	ddt_object[DDT_TYPES][DDT_CLASSES];
+        uint64_t        lookupcycles;
+        uint64_t        lookups;
 	ddt_histogram_t	ddt_histogram[DDT_TYPES][DDT_CLASSES];
 	ddt_histogram_t	ddt_histogram_cache[DDT_TYPES][DDT_CLASSES];
 	ddt_object_t	ddt_object_stats[DDT_TYPES][DDT_CLASSES];
